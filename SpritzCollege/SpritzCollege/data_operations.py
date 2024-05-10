@@ -22,6 +22,7 @@ def load_courses_from_json(file_path):
 
 def delete_db (): 
     Event.objects.all().delete()
+    Course.objects.all().delete()
     print ("-> data off")
 
 def load_events_from_json(file_path):

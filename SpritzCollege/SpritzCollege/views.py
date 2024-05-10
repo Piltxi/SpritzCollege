@@ -1,8 +1,7 @@
 from django.shortcuts import render
-from Activities.models import Event
+from Activities.models import Event, Course
 
 def go_home (request):
 
-    ctx = {"title":"Home", "object_list": Event.objects.all()}
+    ctx = {"title":"Home", "events_list": Event.objects.all(), "courses_list": Course.objects.all()}
     return render(request, template_name="index.html", context=ctx)
-

@@ -22,6 +22,7 @@ from .data_operations import delete_db, init_db
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r"^$|^\/$|^home\/$", go_home, name="home"),
+    path ("activities/", include('Activities.urls'))
 ]
 
 delete_db ()
