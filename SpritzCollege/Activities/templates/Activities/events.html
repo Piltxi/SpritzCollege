@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %} {{title}} - SpritzCollege {% endblock %}
+
+{% block content %}
+    <!-- Contenuto specifico della homepage -->
+    <div style="text-align: center;">
+        <h1>Ciao!</h1>
+
+        <center>
+        
+            {% if object_list.count > 0 %}
+                <p> Memorizzati {{object_list.count}} eventi! </p>
+                <ul>
+
+                {% for l in object_list %}
+
+                    <strong>{{ l.name }}</strong><br>
+                    <strong>Description:</strong> {{ l.description|truncatechars:100 }}
+        
+                {% endfor %}
+
+                </ul>
+            {% else %}
+                <p>Non ci sono libri!</p>
+            {% endif %}
+        </center>
+    </div>
+{% endblock %}
