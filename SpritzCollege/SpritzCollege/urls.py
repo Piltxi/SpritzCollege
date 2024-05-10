@@ -18,12 +18,17 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from .views import go_home
 from .data_operations import delete_db, init_db
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r"^$|^\/$|^home\/$", go_home, name="home"),
     path ("activities/", include('Activities.urls'))
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 delete_db ()
 init_db ()
+
+#<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    # <img src="{{ l.image.url }}" class="d-block w-100" alt="{{ l.name }}">

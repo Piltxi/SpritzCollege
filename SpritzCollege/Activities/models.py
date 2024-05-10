@@ -22,6 +22,8 @@ class Course (models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     recurrence_day = models.CharField(max_length=20)
+    
+    image = models.ImageField(upload_to='Courses', default='Courses/default.jpg')
 
     def __str__(self):
         return self.name

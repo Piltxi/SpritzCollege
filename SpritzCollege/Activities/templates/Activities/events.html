@@ -4,26 +4,29 @@
 
 {% block content %}
     <!-- Contenuto specifico della homepage -->
-    <div style="text-align: center;">
-        <h1>Ciao!</h1>
+    <div class="container">
+        <h1 class="text-center">Benvenuto a SpritzCollege!</h1>
 
-        <center>
-        
-            {% if object_list.count > 0 %}
-                <p> Memorizzati {{object_list.count}} eventi! </p>
-                <ul>
-
-                {% for l in object_list %}
-
-                    <strong>{{ l.name }}</strong><br>
-                    <strong>Description:</strong> {{ l.description|truncatechars:100 }}
-        
+        <div class="row justify-content-center mt-5">
+            {% if object_list %}
+                {% for event in object_list %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ event.name }}</h5>
+                                <p class="card-text">{{ event.description|truncatechars:100 }}</p>
+                                <!-- Aggiungi qui altri dettagli dell'evento se necessario -->
+                            </div>
+                        </div>
+                    </div>
                 {% endfor %}
-
-                </ul>
             {% else %}
-                <p>Non ci sono libri!</p>
+                <div class="col-md-6">
+                    <div class="alert alert-info" role="alert">
+                        Non ci sono eventi memorizzati al momento. Torna più tardi per nuove aggiunte!
+                    </div>
+                </div>
             {% endif %}
-        </center>
+        </div>
     </div>
 {% endblock %}
