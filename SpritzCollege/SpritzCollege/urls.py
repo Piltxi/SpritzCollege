@@ -25,4 +25,4 @@ urlpatterns = [
 ]
 
 delete_db ()
-init_db (120)
+init_db ()

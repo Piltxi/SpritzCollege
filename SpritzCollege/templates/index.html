@@ -10,8 +10,16 @@
 
         <center>
         
-            {% if eventsList.count > 0 %}
-                <p> Memorizzati {{eventsList.count}} eventi! </p>
+            {% if object_list.count > 0 %}
+                <p> Memorizzati {{object_list.count}} eventi! </p>
+                <ul>
+                </ul>
+            {% else %}
+                <p>Non ci sono libri!</p>
+            {% endif %}
+
+            {% if object_list.count > 0 %}
+                <p> Memorizzati {{object_list.count}} eventi! </p>
                 <ul>
                 </ul>
             {% else %}
