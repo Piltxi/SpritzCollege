@@ -3,9 +3,15 @@
 {% block title %} {{title}} - SpritzCollege {% endblock %}
 
 {% block content %}
-    <!-- Contenuto specifico della homepage -->
+
     <div style="text-align: center;">
-        <h1>Ciao!</h1>
+        
+        {% if user.is_authenticated%}
+        <h1>Hello, {{user.username}}!</h1>
+        {% else %}
+        <h1>Hello!</h1>
+        {% endif %}
+
         <p>Benvenuto sulla nostra homepage!</p>
 
         <center>

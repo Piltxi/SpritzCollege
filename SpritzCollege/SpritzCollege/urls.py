@@ -15,20 +15,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path, include
+from django.urls import path, re_path, include, reverse_lazy
 from .views import go_home
 from .data_operations import delete_db, init_db
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r"^$|^\/$|^home\/$", go_home, name="home"),
-    path ("activities/", include('Activities.urls'))
+    
+    path("login/", auth_views.LoginView.as_view(), name="login"),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    
+    path ("activities/", include('Activities.urls')),
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 delete_db ()
 init_db ()
-
-#<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    # <img src="{{ l.image.url }}" class="d-block w-100" alt="{{ l.name }}">

@@ -17,6 +17,16 @@ class Event (models.Model):
         return self.name
 
 class Course (models.Model):
+
+    CATEGORY_CHOICES = [
+        ('ANY', 'uncategorized'),
+        ('TCH', 'tech course'),
+        ('LTR', 'literature course'),
+        ('LAN', 'language course'),
+        ('HND', 'craftsman course'),
+        ('ART', 'art course'),
+    ]
+
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=250)
     start_date = models.DateField()
@@ -24,6 +34,7 @@ class Course (models.Model):
     recurrence_day = models.CharField(max_length=20)
     
     image = models.ImageField(upload_to='Courses', default='Courses/default.jpg')
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='ANY')
 
     def __str__(self):
         return self.name

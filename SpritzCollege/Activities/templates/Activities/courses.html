@@ -4,45 +4,51 @@
 
 {% block content %}
     <!-- Contenuto specifico della homepage -->
-    <div style="text-align: center; max-width: 800px; margin: 0 auto;">
-        <h1>Ciao!</h1>
+    <div class="container">
+        <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+            <h1 class="text-center">Welcome at SpritzCollege</h1>
 
-        <center>
-        
-            {% if object_list.count > 0 %}
-                <p> Memorizzati {{ object_list.count }} corsi! </p>
-                
-                <!-- Carosello Bootstrap -->
-                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                        {% for l in object_list %}
-                            <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
-                        {% endfor %}
-                    </ol>
-                    <div class="carousel-inner">
-                        {% for l in object_list %}
-                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                <div><img src="{{ l.image.url }}" class="d-block w-100 img-fluid" alt="{{ l.name }}" style="max-height: 400px;"></div>
-                                <div class="carousel-caption d-none d-md-block">
-                                    <strong>{{ l.name }}</strong><br>
-                                    <strong>Description:</strong> {{ l.description|truncatechars:100 }}
+            <center>
+            
+                {% if object_list.count > 0 %}
+                    <p> Memorizzati {{ object_list.count }} corsi! </p>
+                    
+                    <!-- Carosello Bootstrap -->
+                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            {% for l in object_list %}
+                                <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
+                            {% endfor %}
+                        </ol>
+                        <div class="carousel-inner">
+                            {% for l in object_list %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <div><img src="{{ l.image.url }}" class="d-block w-100 img-fluid" alt="{{ l.name }}" style="max-height: 400px;"></div>
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <strong>{{ l.name }}</strong><br>
+                                        <strong>Description:</strong> {{ l.description|truncatechars:100 }}
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
                     </div>
-                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </div>
-                
-            {% else %}
-                <p>Non ci sono corsi!</p>
-            {% endif %}
-        </center>
+                    
+                {% else %}
+                    <div class="col-md-6">
+                        <div class="alert alert-info" role="alert">
+                            There are no courses scheduled yet! Come back later or sign up to be the first to know news!
+                        </div>
+                    </div>
+                {% endif %}
+            </center>
+        </div>
     </div>
 {% endblock %}
