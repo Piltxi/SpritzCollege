@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ course.name }} - Dettagli corso - SpritzCollege {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ course.name }}</h1>
+        <p>{{ course.description }}</p>
+        <!-- Aggiungi altri dettagli del corso se necessario -->
+    </div>
+{% endblock %}

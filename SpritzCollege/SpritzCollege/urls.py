@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path, include, reverse_lazy
-from .views import go_home
+from .views import go_home, go_control_panel
 from .data_operations import delete_db, init_db
 from django.conf import settings
 from django.conf.urls.static import static
@@ -29,6 +29,8 @@ urlpatterns = [
     path("login/", auth_views.LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     
+    path ("control/", go_control_panel, name="control_panel"),
+
     path ("activities/", include('Activities.urls')),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

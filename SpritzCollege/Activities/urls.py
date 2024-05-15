@@ -23,6 +23,9 @@ urlpatterns = [
     path("events/", EventsList.as_view(), name="list_events"),
     path("courses/", CoursesList.as_view(), name="list_courses"),
     
+    path('event/<int:event_id>/', event_detail, name='event_detail'),
+    path('course/<int:course_id>/', course_detail, name='course_detail'),
+
     # path("ricerca/", search, name="cercalibro"),
     # path("ricerca/<str:sstring>/<str:where>/", LibroRicercaView.as_view(), name="ricerca_risultati")
 ]

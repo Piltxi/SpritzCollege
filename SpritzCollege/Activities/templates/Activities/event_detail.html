@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ event.name }} - Dettagli evento - SpritzCollege {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ event.name }}</h1>
+        <p>{{ event.description }}</p>
+        <!-- Aggiungi altri dettagli dell'evento se necessario -->
+    </div>
+{% endblock %}
