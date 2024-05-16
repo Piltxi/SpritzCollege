@@ -101,14 +101,18 @@
           <li class="nav-item">
               <a class="nav-link" href="#">Guesthouse</a>
           </li>
+          {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="#">My Panel</a>
+        </li>
+        {% endif %}
           {% if request.user.is_superuser %}
           <li class="nav-item">
               <a class="nav-link" href="{% url 'control_panel' %}">Control Panel</a>
           </li>
+          <li><a href="{% url 'manage_user_groups' %}">Manage User Groups</a></li>
           {% endif %}
       </ul>
-
-
         
         {% if user.is_authenticated %}
         <form method="post" action="{% url 'logout' %}">

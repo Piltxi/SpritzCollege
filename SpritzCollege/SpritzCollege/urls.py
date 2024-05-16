@@ -32,8 +32,9 @@ urlpatterns = [
     path ("control/", go_control_panel, name="control_panel"),
 
     path ("activities/", include('Activities.urls')),
+    path ("profiles/", include('Profiles.urls')),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-delete_db ()
-init_db ()
+# delete_db ()
+# init_db ()

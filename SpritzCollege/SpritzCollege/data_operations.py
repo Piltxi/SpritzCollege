@@ -2,9 +2,18 @@ import random
 from faker import Faker
 import json
 from datetime import datetime
+from django.contrib.auth.models import Group
+
 from Activities.models import Event, Course
 
-def load_courses_from_json(file_path):
+def create_user_groups ():
+    # directors, administration, culture, students, visitors, maintainers
+    group_names = ['directors', 'administration', 'culture', 'students', 'visitors', 'maintainers']
+
+    for name in group_names:
+        Group.objects.get_or_create(name=name)
+
+def load_courses_from_json (file_path):
     with open(file_path, 'r') as file:
         courses_data = json.load(file)
         for course_data in courses_data:
@@ -41,6 +50,8 @@ def load_events_from_json(file_path):
 
 def init_db(): 
     
+    create_user_groups()
+
     json_file_path = '../data/events_SpritzCollege.json'
     load_events_from_json(json_file_path)
 
