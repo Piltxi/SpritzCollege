@@ -1,14 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Manage User Groups</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %} {{title}} - SpritzCollege {% endblock %}
+
+{% block content %}
+
+<center>
     <h1>Manage User Groups</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Save</button>
     </form>
-</body>
-</html>
+</center>
+
+
+{% endblock %}
