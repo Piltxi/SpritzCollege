@@ -3,34 +3,74 @@
 {% block title %} {{title}} - SpritzCollege {% endblock %}
 
 {% block content %}
+{% load static %}
 
-    <div style="text-align: center;">
-        
-        {% if user.is_authenticated%}
-        <h1>Hello, {{user.username}}!</h1>
-        {% else %}
-        <h1>Hello!</h1>
-        {% endif %}
+<div style="display: flex; justify-content: center; padding: 20px 0;">
+    <img src="{% static 'home.jpeg' %}" alt="Descrizione dell'immagine" style="width: 40%; height: auto;">
+</div>
 
-        <p>Benvenuto sulla nostra homepage!</p>
-
-        <center>
-        
+<div style=" top: 50%; left:50%; bottom: 50;">
+    <!-- <div style="text-align: center; display: flex; flex-direction: column; height: 100vh; justify-content: center;"> -->
+    <div style="display: flex; justify-content: space-around;">
+        <div style="width: 40%; background-color: lightblue; padding: 20px;">
             {% if events_list.count > 0 %}
-                <p> Memorizzati {{events_list.count}} eventi! </p>
-                <ul>
-                </ul>
-            {% else %}
-                <p>Non ci sono libri!</p>
+            <div style="font-size: 24px; text-align: center;">
+                <span style="font-size: 14px;">more than</span>
+                <span style="font-size: 40px;">{{ events_list.count }}</span>
+                <span style="font-size: 24px;">events</span>
+            </div>
             {% endif %}
 
+        </div>
+
+        <div style="width: 40%; background-color: lightgreen; padding: 20px;">
             {% if courses_list.count > 0 %}
-                <p> Memorizzati {{courses_list.count}} eventi! </p>
-                <ul>
-                </ul>
+            <div style="font-size: 24px; text-align: center;">
+                <span style="font-size: 14px;">more than</span>
+                <span style="font-size: 40px;">{{ courses_list.count }}</span>
+                <span style="font-size: 24px;">courses</span>
+            </div>
             {% else %}
-                <p>Non ci sono libri!</p>
+            <p>Non ci sono corsi!</p>
             {% endif %}
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div style="margin-top: 20px; background-color: lightgrey; padding: 50px;">
+        <center>
+
+            <h1>Hello, {{user.username}}!</h1>
+            <h3>You have 56 messagges</h3>
+
         </center>
     </div>
+    {% endif %}
+
+    <!-- Aggiungi questo sotto i riquadri degli eventi e dei corsi -->
+    <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+        <div style="width: 40%; background-color: lightcoral; padding: 20px;">
+            <h2>Lastest Events</h2>
+            <ul>
+                {% for event in latest_events %}
+                <li>
+                    <a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div style="width: 40%; background-color: lightyellow; padding: 20px;">
+            <h2>Lastest Events</h2>
+            <ul>
+                {% for course in latest_courses %}
+                <li>
+                    <a href="{% url 'course_detail' course.id %}">{{ course.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- </div> -->
 {% endblock %}
