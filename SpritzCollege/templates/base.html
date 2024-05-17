@@ -93,40 +93,40 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-              <a class="nav-link" href="{% url 'list_events' %}">Events</a>
+            <a class="nav-link" href="{% url 'list_events' %}">Events</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" href="{% url 'list_courses' %}">Courses</a>
+            <a class="nav-link" href="{% url 'list_courses' %}">Courses</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" href="#">Guesthouse</a>
+            <a class="nav-link" href="#">Guesthouse</a>
           </li>
           {% if request.user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'profile_edit' %}">My Panel</a>
-        </li>
-        {% endif %}
+          </li>
+          {% endif %}
           {% if request.user.is_superuser %}
           <li class="nav-item">
-              <a class="nav-link" href="{% url 'control_panel' %}">Control Panel</a>
+            <a class="nav-link" href="{% url 'control_panel' %}">Control Panel</a>
           </li>
           <li><a href="{% url 'manage_user_groups' %}">Manage User Groups</a></li>
           {% endif %}
-      </ul>
-        
+        </ul>
+
         {% if user.is_authenticated %}
         <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout: {{user.username}}</button>
+          {% csrf_token %}
+          <button type="submit">Logout: {{user.username}}</button>
         </form>
-    {% else %}
+        {% else %}
 
-    <form method="post" action="{% url 'login' %}">
-      {% csrf_token %}
-      <button type="submit">Sign in</button>
-  </form>
-    {% endif %}
-    
+        <form method="post" action="{% url 'login' %}">
+          {% csrf_token %}
+          <button type="submit">Sign in</button>
+        </form>
+        {% endif %}
+
 
 
       </div>
@@ -168,13 +168,11 @@
     {% endblock %}
   </main>
 
-  <footer class="bottom-bar
-      <!-- Contenuto del footer -->
-      {% block footer %} 
-          <div class=" text-center">
-    UNIMORE - Tecnologie Web | SpritzCollege 284660
+  <footer class="bottom-bar">
+    <!-- Contenuto del footer -->
+    <div class="text-center">
+      UNIMORE - Tecnologie Web | SpritzCollege 284660
     </div>
-    {% endblock %}
   </footer>
 
 </body>
