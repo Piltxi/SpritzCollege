@@ -3,32 +3,59 @@
 {% block title %} {{title}} - SpritzCollege {% endblock %}
 
 {% block content %}
-    <!-- Contenuto specifico della homepage -->
-    <div class="container">
-        <h1 class="text-center">Welcome at SpritzCollege</h1>
+<script>
+    function resetForm() {
+        document.getElementById("searchForm").reset();
+        window.location.href = window.location.pathname;
+    }
+</script>
+<div class="container">
+    <center>
+        <h1 class="text-center">{{title}} - SpritzCollege</h1>
+    </center>
+    <div class="row">
+        <div class="col-md-3">
+            <div style="position: fixed; top: 50%; transform: translate(-50%, -50%);">
+                <form id="searchForm" class="search-form" method="get" action="">
+                    {{ form.as_p }}
+                    <button type="submit">Search</button>
+                </form>
+                <button class="reset-button" onclick="resetForm()">Show all events</button>
+            </div>
+        </div>
 
-        <div class="row justify-content-center mt-5">
-            {% if object_list %}
-                {% for event in object_list %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
-                                </h5>
-                                <p class="card-text">{{ event.description|truncatechars:100 }}</p>
-                                <!-- Aggiungi qui altri dettagli dell'evento se necessario -->
+
+
+        <div class="col-md-9">
+            <div class="row">
+                <div class="container">
+
+                    <div class="row justify-content-center mt-5">
+                        {% if object_list %}
+                        {% for event in object_list %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
+                                    </h5>
+                                    <p class="card-text">{{ event.description|truncatechars:100 }}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="col-md-6">
-                    <div class="alert alert-info" role="alert">
-                        There are no events scheduled yet! Come back later or sign up to be the first to know news!
+                        {% endfor %}
+                        {% else %}
+                        <div class="col-md-6">
+                            <div class="alert alert-info" role="alert">
+                                There are no events scheduled yet! Come back later or sign up to be the first to know
+                                news!
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-            {% endif %}
+            </div>
         </div>
     </div>
+</div>
 {% endblock %}
