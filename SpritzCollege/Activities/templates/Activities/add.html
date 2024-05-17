@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %} {{title}} - SpritzCollege {% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salva</button>
+</form>
+
+{% endblock %}

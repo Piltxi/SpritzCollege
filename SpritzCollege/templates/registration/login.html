@@ -10,8 +10,8 @@
     <h1 class="text-center">Login at SpritzCollege</h1>
 
     {% if "notok" in request.GET.auth %}
-    <div class="alert alert-danger" role="alert">
-        Si è arrivati qui in quanto non si dispone dei permessi necessari per il servizio scelto!
+    <div class="alert alert-danger" role="alert", style="text-align: center;">
+        OOPs you do not have the necessary permissions. Log in with a accredited account, otherwise contact the administrator.
     </div>
     {% endif %}
 

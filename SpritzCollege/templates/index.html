@@ -37,15 +37,30 @@
     </div>
 
     {% if user.is_authenticated %}
-    <div style="margin-top: 20px; background-color: lightgrey; padding: 50px;">
-        <center>
+<div style="margin-top: 20px; background-color: lightgrey; padding: 50px;">
+    <center>
+        <h1>Hello, {{ user.username }}!</h1>
 
-            <h1>Hello, {{user.username}}!</h1>
-            <h3>You have 56 messagges</h3>
+        {% if request.user.is_superuser %}
+            <h3>Welcome back, superman</h3>
+        {% else %}
+            {% if request.user.groups.exists %}
+                {% for group in request.user.groups.all %}
+                    {% if not forloop.first %}, {% endif %}
+                    {{ group.name }}
+                {% endfor %}
+            {% else %}
+                <p>No groups detected</p>
+            {% endif %}
+        {% endif %}
 
-        </center>
-    </div>
-    {% endif %}
+        <h4>You have 56 messages</h4>
+    </center>
+</div>
+{% endif %}
+
+    
+
 
     <!-- Aggiungi questo sotto i riquadri degli eventi e dei corsi -->
     <div style="display: flex; justify-content: space-around; margin-top: 20px;">

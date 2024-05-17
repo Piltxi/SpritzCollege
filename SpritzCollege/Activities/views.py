@@ -1,10 +1,21 @@
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse_lazy
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Event, Course
+from braces.views import GroupRequiredMixin
+from django.views.generic.edit import CreateView
 from .forms import *
 
 # Create your views here.
+
+class AddEvents (GroupRequiredMixin, CreateView):
+    group_required = ["culture"]
+    title = "Aggiungi un libro alla biblioteca"
+    form_class = EventForm
+    template_name = "Activities/add.html"
+    success_url = reverse_lazy("home")
 
 class EventsList (ListView):
     model = Event
