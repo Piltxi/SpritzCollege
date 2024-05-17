@@ -8,6 +8,7 @@ class Event (models.Model):
     date = models.DateField()
     price = models.FloatField(null=True, blank=True, default="conference room")
 
+    max_capacity = models.IntegerField(default=100)
     place = models.CharField(max_length=20)
 
     def is_free(self):

@@ -29,3 +29,8 @@ class VisitorRegistrationForm(UserCreationForm):
 class UserGroupForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.all())
     groups = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), widget=forms.CheckboxSelectMultiple)
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['bio', 'location', 'birth_date', 'profile_pic']
