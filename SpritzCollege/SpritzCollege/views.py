@@ -6,6 +6,8 @@ def go_home (request):
 
     today = date.today()
     latest_courses = Course.objects.filter(end_date__gte=today).order_by('-end_date')[:5]
+    print(f"Dimensione: {Event.objects.all().count()}")
+
     ctx = {"title":"Home", "events_list": Event.objects.all(), "courses_list": Course.objects.all(), "latest_events": Event.objects.order_by('date')[:5], "latest_courses": latest_courses}
     return render(request, template_name="index.html", context=ctx)
 

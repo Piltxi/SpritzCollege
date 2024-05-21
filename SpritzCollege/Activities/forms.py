@@ -19,3 +19,8 @@ class EventForm(forms.ModelForm):
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+class BookingForm(forms.ModelForm):
+    class Meta:
+        model = Booking
+        fields = ['event', 'num_seats']

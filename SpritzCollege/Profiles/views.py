@@ -49,4 +49,5 @@ def profile_edit(request):
     else:
         # Utilizza lo stesso template HTML per il form di registrazione
         form = ProfileForm(instance=request.user.profile)
-    return render(request, 'Profiles/register.html', {'form': form})
+    # return render(request, 'Profiles/register.html', {'form': form})
+    return render(request, 'control_panel.html', {'form': form, 'title': "My Profile"})

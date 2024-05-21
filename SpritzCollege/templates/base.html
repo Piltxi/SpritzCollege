@@ -33,6 +33,7 @@
   <link rel="icon" type="image/x-icon" href="{% static 'icon_spritz.png' %}">
   <style>
     body {
+      margin-bottom: 100px;
       background-color: white;
       color: black;
     }
@@ -43,6 +44,7 @@
     }
 
     .navbar-nav {
+
       display: flex;
       /* Utilizza flexbox per allineare gli elementi */
       align-items: center;
@@ -65,14 +67,11 @@
       position: fixed;
       bottom: 0;
       width: 100%;
-      /* width: 50px; */
       display: flex;
       align-items: center;
       justify-content: center;
       background-color: red;
-      /* Colore di sfondo del footer */
-      padding: 10px 0;
-      /* Aggiungi spaziatura sopra e sotto al footer */
+      padding: 20px 0;
       color: green;
       /* Colore del testo bianco */
     }
@@ -97,16 +96,19 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'list_courses' %}">Courses</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'crealibro' %}">LI</a>
-          </li>
+          </li></ul>
           {% if request.user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'profile_edit' %}">My Panel</a>
-          </li>
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'profile_edit' %}">My Panel</a>
+            </li>
+          </div>
+          </ul>
+           
+
           {% endif %}
           {% if request.user.is_superuser %}
+          
           <li class="nav-item">
             <a class="nav-link" href="{% url 'control_panel' %}">Control Panel</a>
           </li>
@@ -115,6 +117,12 @@
         </ul>
 
         {% if user.is_authenticated %}
+
+
+        <img src="{% static 'bell.svg' %}" width="30" height="30" alt="" class="svg-image" style="margin: 10px;">
+
+
+
         <form method="post" action="{% url 'logout' %}">
           {% csrf_token %}
           <button type="submit">Logout: {{user.username}}</button>

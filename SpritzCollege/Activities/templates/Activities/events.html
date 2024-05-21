@@ -9,10 +9,23 @@
         window.location.href = window.location.pathname;
     }
 </script>
+
+
+
 <div class="container">
     <center>
         <h1 class="text-center">{{title}} - SpritzCollege</h1>
     </center>
+
+    {% if object_list.count == 0 %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="alert alert-info text-center" role="alert">
+                There are no scheduled events! <br> Come back later or <a href="{% url 'register' %}">sign up</a> to be the first to be informed!
+            </div>
+        </div>
+    </div>
+    {%else%}
     <div class="row">
         <div class="col-md-3">
             <div style="position: fixed; top: 50%; transform: translate(-50%, -50%);">
@@ -44,13 +57,7 @@
                             </div>
                         </div>
                         {% endfor %}
-                        {% else %}
-                        <div class="col-md-6">
-                            <div class="alert alert-info" role="alert">
-                                There are no events scheduled yet! Come back later or sign up to be the first to know
-                                news!
-                            </div>
-                        </div>
+                        {% endif %}
                         {% endif %}
                     </div>
                 </div>

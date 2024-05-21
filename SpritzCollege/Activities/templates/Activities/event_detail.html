@@ -1,11 +1,120 @@
 {% extends 'base.html' %}
 
-{% block title %} {{ event.name }} - Dettagli evento - SpritzCollege {% endblock %}
+{% block title %} {{ object.name }} - event {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1>{{ event.name }}</h1>
-        <p>{{ event.description }}</p>
-        <!-- Aggiungi altri dettagli dell'evento se necessario -->
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .status-indicator {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+
+    .active {
+        background-color: green;
+    }
+
+    .cancelled {
+        background-color: red;
+    }
+
+    .completed {
+        background-color: grey;
+    }
+
+    .divider {
+        width: 100%;
+        margin: 20px 0;
+        border-top: 1px solid #ccc;
+    }
+    .back-link {
+        margin-left: 70px; /* Modifica questo valore secondo le tue preferenze */
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+</style>
+
+
+<div id="confirmDeleteModal" class="modal">
+    <div class="modal-content">
+        <p>Sei sicuro di voler eliminare l'evento "{{ object }}"?</p>
+        <div class="modal-buttons">
+            <button id="confirmDeleteButton">Elimina</button>
+            <button onclick="closeModal()">Annulla</button>
+        </div>
     </div>
+</div>
+
+<a class="back-link" href="{% url 'list_events' %}">Back to Event List</a>
+<div class="container">
+    <h1>{{ object.name }}</h1>
+    <div class="divider"></div>
+    <p><strong>Status:</strong> <span class="status-indicator {{ object.status }}"></span></p>
+    <div style="border: 1px solid #ccc; padding: 10px;">
+        <span style="white-space: nowrap;">{{ object.description }}</span>
+    </div>
+
+    <p><strong>Date:</strong> {{ object.date|date:"d/m/Y H:i" }}</p>
+    {% if object.duration %}
+    <p><strong>Duration:</strong> {{ object.duration }}</p>
+    {% endif %}
+    <p><strong>Price:</strong> {% if object.is_free %}Free{% else %}€ {{ object.price }}{% endif %}</p>
+    <p><strong>Max Capacity:</strong> {{ object.max_capacity }}</p>
+    <p><strong>Place:</strong> {{ object.place }}</p>
+
+</div>
+
+{% for group in request.user.groups.all %}
+    {% if group.name == 'culture' %}
+    
+    <div class="col text-center">
+
+        <a class="btn btn-primary" style="text-align: center; align-items: center;" href="{% url 'booking' event.id %}">Book
+            Event</a>
+    
+    </div>
+
+    {% endif %}
+    {% endfor %}
+
+    <button onclick="openModal()">Elimina Evento</button>
+
+
+    <script>
+        function openModal() {
+            document.getElementById("confirmDeleteModal").style.display = "block";
+        }
+    
+        function closeModal() {
+            document.getElementById("confirmDeleteModal").style.display = "none";
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            var confirmDeleteButton = document.getElementById("confirmDeleteButton");
+            if (confirmDeleteButton) {
+                confirmDeleteButton.addEventListener("click", function() {
+                    window.location.href = "{% url 'event_delete' pk=object.pk %}";
+                });
+            }
+        });
+    </script>
 {% endblock %}

@@ -23,10 +23,15 @@ urlpatterns = [
     path("events/", EventsList.as_view(), name="list_events"),
     path("courses/", CoursesList.as_view(), name="list_courses"),
     
-    path('event/<int:event_id>/', event_detail, name='event_detail'),
-    path('course/<int:course_id>/', course_detail, name='course_detail'),
+    # path('event/<int:pk>/', EventDetail.as_view(), name='event_detail'),
+    # path('event/<int:event_id>/', event_detail, name='event_detail'),
+    path('event/<int:pk>/', EventDetail.as_view(), name='event_detail'),
+    path('course/<int:course_id>/', EventDetail.as_view, name='course_detail'),
     
-    path("crea_libro/",AddEvents.as_view(),name="crealibro"),
+    path("addevent/", AddEvents.as_view(),name="new_event"),
+    path('booking/<int:event_id>/', book_event, name='booking'),
+
+    path('event/<int:pk>/delete/', EventDeleteView.as_view(), name='event_delete'),
 
     # path("ricerca/", search, name="cercalibro"),
     # path("ricerca/<str:sstring>/<str:where>/", LibroRicercaView.as_view(), name="ricerca_risultati")

@@ -6,11 +6,12 @@
 {% load static %}
 
 <div style="display: flex; justify-content: center; padding: 20px 0;">
-    <img src="{% static 'home.jpeg' %}" alt="Descrizione dell'immagine" style="width: 40%; height: auto;">
+    <img src="{% static 'home1.jpeg' %}" alt="Descrizione dell'immagine" style="width: 40%; height: auto;">
 </div>
 
+<!-- events div -->
+
 <div style=" top: 50%; left:50%; bottom: 50;">
-    <!-- <div style="text-align: center; display: flex; flex-direction: column; height: 100vh; justify-content: center;"> -->
     <div style="display: flex; justify-content: space-around;">
         <div style="width: 40%; background-color: lightblue; padding: 20px;">
             {% if events_list.count > 0 %}
@@ -19,10 +20,18 @@
                 <span style="font-size: 40px;">{{ events_list.count }}</span>
                 <span style="font-size: 24px;">events</span>
             </div>
+            {%else%}
+            <div class="col-md-6" style="margin: 20px auto 0;">
+                <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
+                    There are no scheduled events! <br> Come back later or <a href="{% url 'register' %}">sign up</a> to be the first to be informed!
+                </div>
+            </div>
             {% endif %}
+
 
         </div>
 
+        <!-- course div -->
         <div style="width: 40%; background-color: lightgreen; padding: 20px;">
             {% if courses_list.count > 0 %}
             <div style="font-size: 24px; text-align: center;">
@@ -30,41 +39,43 @@
                 <span style="font-size: 40px;">{{ courses_list.count }}</span>
                 <span style="font-size: 24px;">courses</span>
             </div>
-            {% else %}
-            <p>Non ci sono corsi!</p>
+            {%else%}
+            <div class="col-md-6" style="margin: 20px auto 0;">
+                <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
+                    There are no scheduled courses!  <br> Come back later or <a href="{% url 'register' %}">sign up</a> to be the first to be informed!
+                </div>
+            </div>
             {% endif %}
         </div>
     </div>
 
     {% if user.is_authenticated %}
-<div style="margin-top: 20px; background-color: lightgrey; padding: 50px;">
-    <center>
-        <h1>Hello, {{ user.username }}!</h1>
+    <div style="margin-top: 20px; background-color: lightgrey; padding: 50px;">
+        <center>
+            <h1>Hello, {{ user.username }}!</h1>
 
-        {% if request.user.is_superuser %}
-            <h3>Welcome back, superman</h3>
-        {% else %}
-            {% if request.user.groups.exists %}
-                {% for group in request.user.groups.all %}
-                    {% if not forloop.first %}, {% endif %}
-                    {{ group.name }}
-                {% endfor %}
+            {% if request.user.is_superuser %}
+            <h3>Welcome back, superman! <a href="/admin"> war room?</a></h3>
+
             {% else %}
-                <p>No groups detected</p>
+            <!-- <h4>You have 56 messages</h4> -->
+            {% if request.user.groups.exists %}
+            {% for group in request.user.groups.all %}
+            {% if not forloop.first %}, {% endif %}
+            {{ group.name }}
+            {% endfor %}
+            {% else %}
+            <p>No groups detected</p>
             {% endif %}
-        {% endif %}
-
-        <h4>You have 56 messages</h4>
-    </center>
-</div>
-{% endif %}
-
-    
+            {% endif %}
+        </center>
+    </div>
+    {% endif %}
 
 
-    <!-- Aggiungi questo sotto i riquadri degli eventi e dei corsi -->
     <div style="display: flex; justify-content: space-around; margin-top: 20px;">
         <div style="width: 40%; background-color: lightcoral; padding: 20px;">
+            {% if latest_events.count > 0 %}
             <h2>Lastest Events</h2>
             <ul>
                 {% for event in latest_events %}
@@ -72,10 +83,12 @@
                     <a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
                 </li>
                 {% endfor %}
+                {% endif %}
             </ul>
         </div>
 
         <div style="width: 40%; background-color: lightyellow; padding: 20px;">
+            {% if latest_courses.count > 0 %}
             <h2>Lastest Events</h2>
             <ul>
                 {% for course in latest_courses %}
@@ -83,6 +96,7 @@
                     <a href="{% url 'course_detail' course.id %}">{{ course.name }}</a>
                 </li>
                 {% endfor %}
+                {% endif %}
             </ul>
         </div>
     </div>
