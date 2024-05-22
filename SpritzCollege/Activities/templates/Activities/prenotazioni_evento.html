@@ -1,0 +1,22 @@
+<!-- Activities/prenotazioni_evento.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prenotazioni per {{ evento.name }}</title>
+</head>
+<body>
+    <h1>Prenotazioni per {{ evento.name }}</h1>
+
+    <ul>
+        {% for prenotazione in prenotazioni %}
+            <li>
+                Utente: {{ prenotazione.user.username }} <br>
+                Posti prenotati: {{ prenotazione.num_seats }} <br>
+                Orario di prenotazione: {{ prenotazione.booking_time }} <br>
+
+            
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

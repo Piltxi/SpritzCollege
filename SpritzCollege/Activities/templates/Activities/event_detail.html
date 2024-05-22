@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} {{ object.name }} - event {% endblock %}
+{% block title %}{{ object.name }} - event{% endblock %}
 
 {% block content %}
 
@@ -51,8 +51,18 @@
         overflow: auto;
         background-color: rgba(0, 0, 0, 0.4);
     }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+    .modal-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
 </style>
-
 
 <div id="confirmDeleteModal" class="modal">
     <div class="modal-content">
@@ -64,6 +74,12 @@
     </div>
 </div>
 
+<!-- Finestra modale per confermare l'eliminazione -->
+<div id="deleteConfirmation" class="modal">
+    <div class="modal-content">
+        <p>Evento eliminato con successo! reindirizzamento in corso....</p>
+    </div>
+</div>
 <a class="back-link" href="{% url 'list_events' %}">Back to Event List</a>
 <div class="container">
     <h1>{{ object.name }}</h1>
@@ -79,42 +95,61 @@
     {% endif %}
     <p><strong>Price:</strong> {% if object.is_free %}Free{% else %}€ {{ object.price }}{% endif %}</p>
     <p><strong>Max Capacity:</strong> {{ object.max_capacity }}</p>
+    <p><strong>Available Seats:</strong> {{ object.available_seats }}</p>
     <p><strong>Place:</strong> {{ object.place }}</p>
 
-</div>
-
-{% for group in request.user.groups.all %}
-    {% if group.name == 'culture' %}
-    
+    {% if request.user.is_authenticated %}
     <div class="col text-center">
 
-        <a class="btn btn-primary" style="text-align: center; align-items: center;" href="{% url 'booking' event.id %}">Book
-            Event</a>
+        <a href="{% url 'my_bookings' %}">My Bookings</a>
+
     
+    </div>
+    {% for group in request.user.groups.all %}
+    {% if group.name == 'culture' %}
+    <button onclick="openModal()">Elimina Evento</button>
+    <div class="col text-center">
+        <a class="btn btn-primary" style="text-align: center; align-items: center;" href="{% url 'prenotazioni_evento' evento_id=object.id %}">View Bookings</a>
     </div>
 
     {% endif %}
-    {% endfor %}
+  {% endfor %}
+  {% endif %}
+</div>
 
-    <button onclick="openModal()">Elimina Evento</button>
 
 
-    <script>
-        function openModal() {
-            document.getElementById("confirmDeleteModal").style.display = "block";
-        }
-    
-        function closeModal() {
-            document.getElementById("confirmDeleteModal").style.display = "none";
-        }
-    
-        document.addEventListener('DOMContentLoaded', function() {
-            var confirmDeleteButton = document.getElementById("confirmDeleteButton");
-            if (confirmDeleteButton) {
-                confirmDeleteButton.addEventListener("click", function() {
-                    window.location.href = "{% url 'event_delete' pk=object.pk %}";
-                });
+<script>
+    function openModal() {
+        document.getElementById("confirmDeleteModal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("confirmDeleteModal").style.display = "none";
+    }
+
+    document.getElementById("confirmDeleteButton").addEventListener("click", function() {
+        fetch("{% url 'event_delete' pk=object.pk %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Nascondi il modal di eliminazione
+                closeModal();
+                // Mostra il messaggio di conferma
+                document.getElementById("deleteConfirmation").style.display = "block";
+                // Reindirizza alla lista degli eventi dopo un breve ritardo
+                setTimeout(function() {
+                    window.location.href = "{% url 'list_events' %}";
+                }, 1300); // Ritardo di 2 secondi prima del reindirizzamento
+            } else {
+                alert("Si è verificato un errore durante l'eliminazione dell'evento.");
             }
         });
-    </script>
+    });
+</script>
+
 {% endblock %}
