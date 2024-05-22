@@ -32,7 +32,16 @@ urlpatterns = [
     path('booking/<int:event_id>/', book_event, name='booking'),
 
     path('event/<int:pk>/delete/', EventDeleteView.as_view(), name='event_delete'),
+    path('my-bookings/', MyBookingsListView.as_view(), name='my_bookings'),
+    path('cancel_booking/<int:pk>/', BookingDeleteView.as_view(), name='cancel_booking'),
+    path('booking/<int:pk>/update/', BookingUpdateView.as_view(), name='booking_update'),
 
+    path('eventi/<int:evento_id>/prenotazioni/', PrenotazioniEventoView.as_view(), name='prenotazioni_evento'),
     # path("ricerca/", search, name="cercalibro"),
     # path("ricerca/<str:sstring>/<str:where>/", LibroRicercaView.as_view(), name="ricerca_risultati")
 ]
+
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
+
+handler404 = custom_404

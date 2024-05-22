@@ -67,6 +67,8 @@
     {% if request.user.is_authenticated %}
 
     <a href="{% url 'profile_edit' %}">My profile</a>
+    <a href="{% url 'my_bookings' %}">My books</a>
+    
 
     {% for group in request.user.groups.all %}
     {% if group.name == 'culture' %}

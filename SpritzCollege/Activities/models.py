@@ -20,6 +20,12 @@ class Event(models.Model):
     place = models.CharField(max_length=100, default="conference room")
     status = models.CharField(max_length=20, choices=[('active', 'Active'), ('cancelled', 'Cancelled'), ('completed', 'Completed')], default='active')
 
+    @property
+    def available_seats(self):
+        total_booked_seats = self.bookings.aggregate(models.Sum('num_seats'))['num_seats__sum'] or 0
+        return self.max_capacity - total_booked_seats
+
+
     def is_free(self):
         return self.price is None or self.price == Decimal('0.00')
 
@@ -37,6 +43,7 @@ class Booking(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='bookings')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     num_seats = models.PositiveIntegerField()
+    booking_time = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
         if self.event.status != 'active':
@@ -52,8 +59,9 @@ class Booking(models.Model):
         return f"Prenotazione di {self.user.username} per {self.event.name}"
 
     class Meta:
-        unique_together = ('event', 'user')
+        unique_together = ('event', 'user', 'booking_time')
         ordering = ['event', 'user']
+
 
 
 class Course (models.Model):

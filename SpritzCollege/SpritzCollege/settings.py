@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-@e(-@=x_zyxb*71le*2vps!16o!2-!78&)3v-_-s&so8@k0y_m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'www.spritzcollege.org']
 
 
 # Application definition
@@ -138,4 +138,4 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 LOGIN_URL = "/login/?auth=notok"
 LOGIN_REDIRECT_URL = "/?login=ok"
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/?logout=ok'
