@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}Modifica Prenotazione{% endblock %}
+
+{% block title %}Edit Booking{% endblock %}
 
 {% block content %}
-  <h1>Modifica Prenotazione</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Salva Modifiche</button>
-  </form>
+  <div style="text-align: center;">  <!-- Center content -->
+    <h1>Edit Booking</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
 {% endblock %}

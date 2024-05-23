@@ -1,22 +1,49 @@
-<!-- Activities/prenotazioni_evento.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Prenotazioni per {{ evento.name }}</title>
-</head>
-<body>
-    <h1>Prenotazioni per {{ evento.name }}</h1>
+{% extends 'base.html' %}
+{% block title %}Modifica Prenotazione{% endblock %}
 
-    <ul>
-        {% for prenotazione in prenotazioni %}
-            <li>
-                Utente: {{ prenotazione.user.username }} <br>
-                Posti prenotati: {{ prenotazione.num_seats }} <br>
-                Orario di prenotazione: {{ prenotazione.booking_time }} <br>
+{% block content %}
+<style>
+    .table-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 25px;
+        display: flex;
+        justify-content: space-around;
+    }
+    table {
+        width: 100%; /* Aumenta la larghezza della tabella al massimo disponibile */
+        border-collapse: collapse; /* Elimina lo spazio tra le celle */
+    }
+    th, td {
+        padding: 20px; /* Aumenta il padding per rendere il testo più spazioso */
+        text-align: left;
+        min-width: 150px; /* Imposta una larghezza minima per ogni cella */
+    }
+    th {
+        background-color: #f2f2f2; /* Colore di sfondo per le intestazioni */
+    }
+</style>
 
-            
-            </li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+<div class="table-container">
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Utente</th>
+                <th>Posti Prenotati</th>
+                <th>Orario di Prenotazione</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prenotazione in prenotazioni %}
+            <tr>
+                <td>{{ prenotazione.user.username }}</td>
+                <td>{{ prenotazione.num_seats }}</td>
+                <td>{{ prenotazione.booking_time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

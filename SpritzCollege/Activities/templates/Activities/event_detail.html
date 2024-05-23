@@ -99,22 +99,21 @@
     <p><strong>Place:</strong> {{ object.place }}</p>
 
     {% if request.user.is_authenticated %}
-    <div class="col text-center">
-
-        <a href="{% url 'my_bookings' %}">My Bookings</a>
-
-    
+    <div class="col text-center" style="margin-bottom: 10px;">
+        <a class="btn btn-primary" href="{% url 'my_bookings' %}">My Bookings</a>
+        <a class="btn btn-primary" href="{% url 'booking' event.id %}">Book event</a>
     </div>
     {% for group in request.user.groups.all %}
     {% if group.name == 'culture' %}
-    <button onclick="openModal()">Elimina Evento</button>
-    <div class="col text-center">
+    <div class="col text-center" style="margin-bottom: 10px;">
         <a class="btn btn-primary" style="text-align: center; align-items: center;" href="{% url 'prenotazioni_evento' evento_id=object.id %}">View Bookings</a>
+        <button class="btn btn-danger" onclick="openModal()">Delete Event</button>
     </div>
-
     {% endif %}
-  {% endfor %}
-  {% endif %}
+    {% endfor %}
+    {% endif %}
+    
+    
 </div>
 
 
