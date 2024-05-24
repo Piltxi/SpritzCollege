@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic.list import ListView
@@ -17,7 +18,7 @@ from django.core.exceptions import ValidationError
 class AddEvents(GroupRequiredMixin, CreateView):
     group_required = ["culture"]
     form_class = EventForm
-    template_name = "Activities/Events/new_activity.html"
+    template_name = "Activities/new_activity.html"
     success_url = reverse_lazy("home")
 
     def get_context_data(self, **kwargs):
@@ -28,7 +29,7 @@ class AddEvents(GroupRequiredMixin, CreateView):
 class AddCourse (GroupRequiredMixin, CreateView):
     group_required = ["culture"]
     form_class = CourseForm
-    template_name = "Activities/Events/new_activity.html"
+    template_name = "Activities/new_activity.html"
     success_url = reverse_lazy("home")
 
     def get_context_data(self, **kwargs):
@@ -75,7 +76,7 @@ def event_detail(request, event_id):
 
 class EventDetail(DetailView):
     model = Event
-    template_name = 'Activities/event_detail.html'
+    template_name = 'Activities/Events/event_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -181,3 +182,42 @@ class AdminBookingUpdateView(CultureGroupRequiredMixin, UpdateView):
         return reverse_lazy('prenotazioni_evento', kwargs={'evento_id': event_id})
 
 
+def generate_recurrence_dates(course):
+    recurrence_dates = []
+    current_date = course.start_date
+    while current_date <= course.end_date:
+        if current_date.strftime('%A').lower() == course.recurrence_day.lower():
+            recurrence_dates.append(current_date)
+        current_date += timedelta(days=1)
+    return recurrence_dates
+
+def calendar_view(request):
+    events = Event.objects.all()
+    courses = Course.objects.all()
+    calendar_data = []
+
+    for event in events:
+        calendar_data.append({
+            'id': event.id,
+            'title': event.name,
+            'start': event.date.isoformat(),
+            'description': event.description,
+            'type': 'event'
+        })
+
+    for course in courses:
+        recurrence_dates = generate_recurrence_dates(course)
+        for date in recurrence_dates:
+            calendar_data.append({
+                'id': course.id,
+                'title': course.name,
+                'start': date.isoformat(),
+                'description': course.description,
+                'type': 'course'
+            })
+
+    context = {
+        'title': 'Calendar',
+        'calendar_data': calendar_data
+    }
+    return render(request, 'Activities/calendar.html', context)

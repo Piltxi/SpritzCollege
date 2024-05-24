@@ -46,6 +46,8 @@ urlpatterns = [
     path('eventi/<int:evento_id>/prenotazioni/', PrenotazioniEventoView.as_view(), name='prenotazioni_evento'),
     # path("ricerca/", search, name="cercalibro"),
     # path("ricerca/<str:sstring>/<str:where>/", LibroRicercaView.as_view(), name="ricerca_risultati")
+
+    path('calendar/', calendar_view, name='calendar_view'),
 ]
 
 def custom_404(request, exception):

@@ -96,44 +96,49 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'list_courses' %}">Courses</a>
-          </li></ul>
-          {% if request.user.is_authenticated %}
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'profile_edit' %}">My Panel</a>
-            </li>
-          </div>
-          </ul>
-           
-
-          {% endif %}
-          {% if request.user.is_superuser %}
-          
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'control_panel' %}">Control Panel</a>
           </li>
-          <li><a href="{% url 'manage_user_groups' %}">Manage User Groups</a></li>
-          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'calendar_view' %}">Calendar</a>
+          </li>
+
         </ul>
+        {% if request.user.is_authenticated %}
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'profile_edit' %}">My Panel</a>
+          </li>
+      </div>
+      </ul>
 
-        {% if user.is_authenticated %}
+
+      {% endif %}
+      {% if request.user.is_superuser %}
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'control_panel' %}">Control Panel</a>
+      </li>
+      <li><a href="{% url 'manage_user_groups' %}">Manage User Groups</a></li>
+      {% endif %}
+      </ul>
+
+      {% if user.is_authenticated %}
 
 
-        <img src="{% static 'bell.svg' %}" width="30" height="30" alt="" class="svg-image" style="margin: 10px;">
+      <img src="{% static 'bell.svg' %}" width="30" height="30" alt="" class="svg-image" style="margin: 10px;">
 
 
 
-        <form method="post" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <button type="submit">Logout: {{user.username}}</button>
-        </form>
-        {% else %}
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout: {{user.username}}</button>
+      </form>
+      {% else %}
 
-        <form method="post" action="{% url 'login' %}">
-          {% csrf_token %}
-          <button type="submit">Sign in</button>
-        </form>
-        {% endif %}
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <button type="submit">Sign in</button>
+      </form>
+      {% endif %}
 
 
 
@@ -196,7 +201,7 @@
       $("#info").modal('show');
     });
   </script>
-  
+
   {% endif %}
   {% endif %}
 
@@ -209,7 +214,8 @@
   <footer class="bottom-bar">
     <!-- Contenuto del footer -->
     <div class="text-center">
-      <a href="https://www.unimore.it/it">UNIMORE</a> - Tecnologie Web | <a href="{% url 'home' %}">SpritzCollege</a> 284660
+      <a href="https://www.unimore.it/it">UNIMORE</a> - Tecnologie Web | <a href="{% url 'home' %}">SpritzCollege</a>
+      284660
     </div>
   </footer>
 

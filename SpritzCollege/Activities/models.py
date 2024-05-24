@@ -12,11 +12,7 @@ from django.contrib.auth.models import User
 from decimal import Decimal
 
 def default_event_time():
-    now = timezone.now()
-    now_plus_15 = now + timedelta(minutes=15)
-    now_plus_15 = now_plus_15.replace(second=0, microsecond=0)
-    return now_plus_15
-
+    return (timezone.localtime(timezone.now()) + timedelta(hours=1)).replace(second=0, microsecond=0)
 
 class Event(models.Model):
     name = models.CharField(max_length=100)

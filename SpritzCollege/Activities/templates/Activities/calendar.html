@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ title }} - SpritzCollege {% endblock %}
+
+{% block content %}
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
+<style>
+    #calendar {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+</style>
+<div id='calendar'></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: {{ calendar_data|safe }},
+            eventClick: function(info) {
+                var eventType = info.event.extendedProps.type;
+                var eventId = info.event.id;
+                if (eventType === 'course') {
+                    window.location.href = '{% url "course_detail" 0 %}'.replace('0', eventId);
+                } else if (eventType === 'event') {
+                    window.location.href = '{% url "event_detail" 0 %}'.replace('0', eventId);
+                } else {
+                    alert('Unknown event type');
+                }
+            }
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}
