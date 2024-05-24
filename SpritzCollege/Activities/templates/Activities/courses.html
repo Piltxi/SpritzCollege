@@ -3,10 +3,44 @@
 {% block title %} {{ title }} - SpritzCollege {% endblock %}
 
 {% block content %}
+<style>
+ .btn-custom {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+.add-event-container {
+    position: fixed;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
+
+
 <!-- Contenuto specifico della homepage -->
 <div class="container">
     <div style="text-align: center; max-width: 800px; margin: 0 auto;">
         <h1 class="text-center">{{title}} - SpritzCollege</h1>
+
+        {% if request.user.is_authenticated %}
+        <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+        {% for group in request.user.groups.all %}
+        {% if group.name == 'culture' %}
+        <a href="{% url 'new_course' %}" class="btn-custom">Add course</a>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
 
         <center>
 

@@ -6,7 +6,8 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Event, Course, Booking
 from braces.views import GroupRequiredMixin
-from .forms import BookingForm, EventForm, SearchForm
+from django.contrib import messages
+from .forms import BookingForm, EventForm, SearchForm, CourseForm
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
@@ -16,17 +17,28 @@ from django.core.exceptions import ValidationError
 class AddEvents(GroupRequiredMixin, CreateView):
     group_required = ["culture"]
     form_class = EventForm
-    template_name = "control_panel.html"
+    template_name = "Activities/Events/new_activity.html"
     success_url = reverse_lazy("home")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "New Event"
         return context
+    
+class AddCourse (GroupRequiredMixin, CreateView):
+    group_required = ["culture"]
+    form_class = CourseForm
+    template_name = "Activities/Events/new_activity.html"
+    success_url = reverse_lazy("home")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "New Course"
+        return context
 
 class EventsList(ListView):
     model = Event
-    template_name = "Activities/events.html"
+    template_name = "Activities/Events/events.html"
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -115,7 +127,7 @@ class MyBookingsListView(ListView):
         return Booking.objects.filter(user=self.request.user, event__status='active')
 
 @method_decorator(login_required, name='dispatch')
-class BookingDeleteView(DeleteView):
+class MyBookingDeleteView(DeleteView):
     model = Booking
     success_url = reverse_lazy('my_bookings')
 
@@ -124,7 +136,7 @@ class BookingDeleteView(DeleteView):
         return super().get_queryset().filter(user=self.request.user)
 
 @method_decorator(login_required, name='dispatch')
-class BookingUpdateView(UpdateView):
+class MyBookingUpdateView(UpdateView):
     model = Booking
     form_class = BookingForm
     template_name = 'Activities/booking_update.html'  # Template per la modifica della prenotazione
@@ -147,3 +159,25 @@ class PrenotazioniEventoView(LoginRequiredMixin, CultureGroupRequiredMixin, Deta
         context = super().get_context_data(**kwargs)
         context['prenotazioni'] = Booking.objects.filter(event=self.object)
         return context
+    
+@method_decorator(login_required, name='dispatch')
+class AdminBookingDeleteView(CultureGroupRequiredMixin, DeleteView):
+    model = Booking
+    success_url = reverse_lazy('prenotazioni_evento')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Prenotazione eliminata con successo!")
+        return super().delete(request, *args, **kwargs)
+    
+@method_decorator(login_required, name='dispatch')
+class AdminBookingUpdateView(CultureGroupRequiredMixin, UpdateView):
+    model = Booking
+    form_class = BookingForm
+    template_name = 'Activities/booking_update.html'
+    success_url = reverse_lazy('prenotazioni_evento')
+
+    def get_success_url(self):
+        event_id = self.object.event.id
+        return reverse_lazy('prenotazioni_evento', kwargs={'evento_id': event_id})
+
+

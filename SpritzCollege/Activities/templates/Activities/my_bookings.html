@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}Le mie Prenotazioni{% endblock %}
+{% block title %} {{ user.username }} - Bookings{% endblock %}
 
 {% block content %}
-<h1>Le mie Prenotazioni</h1>
+<h1 style="text-align: center;">{{ user.username }}'s bookings</h1>
 {% if bookings %}
     <ul>
         {% for booking in bookings %}
@@ -23,7 +23,13 @@
         {% endfor %}
     </ul>
 {% else %}
-    <p>Non hai ancora effettuato alcuna prenotazione.</p>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="alert alert-info text-center" role="alert">
+                You haven't made any reservations yet. <br> Visit our <a href="{% url 'list_events' %}">events</a> or our <a href="{% url 'list_courses' %}">courses</a>!
+            </div>
+        </div>
+    </div>
 {% endif %}
 
 <!-- Finestra modale per confermare l'eliminazione -->

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %} {{title}} - SpritzCollege {% endblock %}
+
+{% block content %}
+{% load static %}
+<style>
+    body {
+        background-color: black;
+        color: red;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .center {
+        flex: 1;
+    }
+
+    .center form {
+        height: auto;
+        padding: 20px;
+        background-color: white;
+        color: black;
+        border-radius: 10px;
+    }
+
+    .container img {
+        max-height: 300px;
+        width: auto;
+        object-fit: cover;
+        margin-left: 20px;
+    }
+</style>
+
+<div class="content">
+    <h1 style="text-align: center;"> {{title}} - SpritzCollege </h1>
+
+    <div class="container">
+        <div class="center">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" style="background-color: white; color: black;">Save Activity</button>
+            </form>
+        </div>
+        <div>
+            <img src="{% static 'events.jpg' %}" alt="Descrizione dell'immagine">
+        </div>
+    </div>
+</div>
+{% endblock %}
