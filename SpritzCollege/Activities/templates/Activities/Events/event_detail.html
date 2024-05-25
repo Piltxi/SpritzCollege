@@ -131,8 +131,7 @@
 
     {% if request.user.is_authenticated %}
     <div class="col text-center" style="margin-bottom: 10px;">
-        <a class="btn btn-primary" href="{% url 'user_event_booking_list' %}">My Bookings</a>
-        <a class="btn btn-primary" href="{% url 'book_event_view' event.id %}">Book event</a>
+        <a class="btn btn-primary" href="{% url 'event_newbooking' event.id %}">Book event</a>
     </div>
     {% for group in request.user.groups.all %}
     {% if group.name == 'culture' %}

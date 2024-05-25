@@ -20,33 +20,7 @@ class CultureGroupRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.groups.filter(name='culture').exists()
 
-class AddEvents(GroupRequiredMixin, CreateView):
-    group_required = ["culture"]
-    form_class = EventForm
-    template_name = "Activities/new_activity.html"
-    success_url = reverse_lazy("home")
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        print("Evento creato correttamente")
-        return response
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = "New Event"
-        return context
-    
-class AddCourse (GroupRequiredMixin, CreateView):
-    group_required = ["culture"]
-    form_class = CourseForm
-    template_name = "Activities/new_activity.html"
-    success_url = reverse_lazy("home")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = "New Course"
-        return context
-
+#* public views
 class EventsList(ListView):
     model = Event
     template_name = "Activities/Events/events.html"
@@ -80,6 +54,23 @@ class CoursesList(ListView):
         context['title'] = "Courses"
         return context
 
+#* EVENTS
+class AddEvents(GroupRequiredMixin, CreateView):
+    group_required = ["culture"]
+    form_class = EventForm
+    template_name = "Activities/master_activity.html"
+    success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        print("Evento creato correttamente")
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "New Event - SpritzCollege"
+        return context
+
 class EventDetail(DetailView):
     model = Event
     template_name = 'Activities/Events/event_detail.html'
@@ -87,6 +78,34 @@ class EventDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['available_seats'] = self.object.available_seats
+        return context
+    
+class EventUpdateView(CultureGroupRequiredMixin, UpdateView):
+    model = Event
+    form_class = EventForm
+    template_name = 'Activities/master_activity.html'
+    success_url = reverse_lazy('list_events')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f' {self.get_object().name} \u2192 Update Event'
+        return context
+
+class EventDeleteView(CultureGroupRequiredMixin, DeleteView):
+    model = Event
+    success_url = reverse_lazy('list_events')
+    template_name = 'Activities/event_detail.html'
+
+#* COURSES
+class AddCourse (GroupRequiredMixin, CreateView):
+    group_required = ["culture"]
+    form_class = CourseForm
+    template_name = "Activities/master_activity.html"
+    success_url = reverse_lazy("home")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "New Course"
         return context
 
 class CourseDetail(DetailView):
@@ -99,32 +118,16 @@ class CourseDetail(DetailView):
         # Puoi aggiungere altri dati al contesto se necessario
         return context
 
-class EventUpdateView(CultureGroupRequiredMixin, UpdateView):
-    model = Event
-    form_class = EventForm
-    template_name = 'Activities/new_activity.html'
-    success_url = reverse_lazy('list_events')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = f' {self.get_object().name} \u2192 Update Event'
-        return context
-
 class CourseUpdateView(CultureGroupRequiredMixin, UpdateView):
     model = Course
     form_class = CourseForm
-    template_name = 'Activities/new_activity.html'
+    template_name = 'Activities/master_activity.html'
     success_url = reverse_lazy('list_courses')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Update Course'
         return context
-
-class EventDeleteView(CultureGroupRequiredMixin, DeleteView):
-    model = Event
-    success_url = reverse_lazy('list_events')
-    template_name = 'Activities/event_detail.html'
 
 class CourseDeleteView(CultureGroupRequiredMixin, DeleteView):
     model = Course
@@ -156,12 +159,12 @@ def book_event(request, event_id):
                 return redirect('event_detail', pk=event.id)
             except ValidationError as e:
                 form.add_error(None, e)
-        else: 
-            errors = form.errors.as_json()
-            return JsonResponse({'errors': errors}, status=400)
+        # else: 
+        #     errors = form.errors.as_json()
+        #     return JsonResponse({'errors': errors}, status=400)
     else:
         form = BookingForm(initial={'event': event})
-    return render(request, 'Activities/new_activity.html', {'title': f'{event.name} \u2192 Book Event', 'form': form, 'event': event})
+    return render(request, 'Activities/master_activity.html', {'title': f'{event.name} \u2192 Book Event', 'form': form, 'event': event})
 
 @method_decorator(login_required, name='dispatch')
 class MyBookingsListView(ListView):
@@ -277,7 +280,7 @@ class UserBookingListView(LoginRequiredMixin, ListView):
 class UserBookingUpdateView(LoginRequiredMixin, UpdateView):
     model = Booking
     fields = ['num_seats']
-    template_name = 'Activities/new_activity.html'
+    template_name = 'Activities/master_activity.html'
 
     def get_queryset(self):
         return Booking.objects.filter(user=self.request.user)
