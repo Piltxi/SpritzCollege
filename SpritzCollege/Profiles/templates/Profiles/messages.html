@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>My Messages</h2>
+  <ul>
+    {% for message in messages %}
+      <li>
+        <strong>{{ message.title }}</strong> - {{ message.timestamp }}
+        <p>{{ message.content }}</p>
+      </li>
+    {% empty %}
+      <li>No messages yet.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

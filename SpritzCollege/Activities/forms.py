@@ -17,7 +17,7 @@ class EventForm(forms.ModelForm):
         model = Event
         fields = ['name', 'description', 'date', 'price', 'max_capacity', 'place']
         widgets = {
-            'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),  # Utilizza un widget per data e ora
+            'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
 class CourseForm(forms.ModelForm):
@@ -48,3 +48,7 @@ class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
         fields = ['event', 'num_seats']
+    def __init__(self, *args, **kwargs):
+        super(BookingForm, self).__init__(*args, **kwargs)
+        self.fields['num_seats'].initial = 1
+        

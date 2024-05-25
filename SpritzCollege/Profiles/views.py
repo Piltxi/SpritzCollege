@@ -5,6 +5,9 @@ from .forms import UserGroupForm, VisitorRegistrationForm
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import VisitorRegistrationForm, ProfileForm
+from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Message
 
 def register(request):
     if request.method == 'POST':
@@ -47,7 +50,21 @@ def profile_edit(request):
             form.save()
             return redirect('profile')
     else:
-        # Utilizza lo stesso template HTML per il form di registrazione
         form = ProfileForm(instance=request.user.profile)
-    # return render(request, 'Profiles/register.html', {'form': form})
     return render(request, 'control_panel.html', {'form': form, 'title': "My Profile"})
+
+class MessageListView(LoginRequiredMixin, ListView):
+    model = Message
+    template_name = 'Profiles/messages.html'
+    context_object_name = 'messages'
+
+    def get_queryset(self):
+        return Message.objects.filter(user=self.request.user).order_by('-timestamp')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = self.get_queryset()
+        message_count = queryset.count()
+        print(f"Number of messages: {message_count}")  # Stampa il numero di messaggi per debug
+        context['message_count'] = message_count
+        return context

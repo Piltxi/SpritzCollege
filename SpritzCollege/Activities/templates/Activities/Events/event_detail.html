@@ -4,6 +4,34 @@
 
 {% block content %}
 
+<!-- Nel tuo template HTML -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('form').on('submit', function(event) {
+            event.preventDefault(); // Previeni l'invio del modulo predefinito
+
+            // Effettua una richiesta AJAX per inviare i dati del modulo
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    // Se la prenotazione è avvenuta con successo, ridireziona alla pagina dell'evento
+                    window.location.href = response.redirect;
+                },
+                error: function(response) {
+                    // Se ci sono errori nel form, mostra una finestra modale con gli errori
+                    var errors = JSON.parse(response.responseText).errors;
+                    alert(errors); // Puoi sostituire questo con la logica per mostrare la finestra modale
+                }
+            });
+        });
+    });
+</script>
+
+
 <style>
     .container {
         max-width: 800px;
@@ -37,9 +65,11 @@
         margin: 20px 0;
         border-top: 1px solid #ccc;
     }
+
     .back-link {
-        margin-left: 70px; /* Modifica questo valore secondo le tue preferenze */
+        margin-left: 70px;
     }
+
     .modal {
         display: none;
         position: fixed;
@@ -51,6 +81,7 @@
         overflow: auto;
         background-color: rgba(0, 0, 0, 0.4);
     }
+
     .modal-content {
         background-color: #fefefe;
         margin: 15% auto;
@@ -58,6 +89,7 @@
         border: 1px solid #888;
         width: 80%;
     }
+
     .modal-buttons {
         display: flex;
         justify-content: space-between;
@@ -66,21 +98,20 @@
 
 <div id="confirmDeleteModal" class="modal">
     <div class="modal-content">
-        <p>Sei sicuro di voler eliminare l'evento "{{ object }}"?</p>
+        <p>Are you sure you want to delete the event "{{ object }}"?</p>
         <div class="modal-buttons">
-            <button id="confirmDeleteButton">Elimina</button>
-            <button onclick="closeModal()">Annulla</button>
+            <button id="confirmDeleteButton">Yes</button>
+            <button onclick="closeModal()">Cancel</button>
         </div>
     </div>
 </div>
 
-<!-- Finestra modale per confermare l'eliminazione -->
 <div id="deleteConfirmation" class="modal">
     <div class="modal-content">
-        <p>Evento eliminato con successo! reindirizzamento in corso....</p>
+        <p>Event successfully deleted! redirect in progress....</p>
     </div>
 </div>
-<a class="back-link" href="{% url 'list_events' %}">Back to Event List</a>
+<a class="back-link" href="{% url 'list_events' %}">/Back to Event List/</a>
 <div class="container">
     <h1>{{ object.name }}</h1>
     <div class="divider"></div>
@@ -100,22 +131,25 @@
 
     {% if request.user.is_authenticated %}
     <div class="col text-center" style="margin-bottom: 10px;">
-        <a class="btn btn-primary" href="{% url 'my_bookings' %}">My Bookings</a>
-        <a class="btn btn-primary" href="{% url 'booking' event.id %}">Book event</a>
+        <a class="btn btn-primary" href="{% url 'user_event_booking_list' %}">My Bookings</a>
+        <a class="btn btn-primary" href="{% url 'book_event_view' event.id %}">Book event</a>
     </div>
     {% for group in request.user.groups.all %}
     {% if group.name == 'culture' %}
+
     <div class="col text-center" style="margin-bottom: 10px;">
-        <a class="btn btn-primary" style="text-align: center; align-items: center;" href="{% url 'prenotazioni_evento' evento_id=object.id %}">View Bookings</a>
+        <a class="btn btn-warning" href="{% url 'event_update' event.id %}">Update Event</a>
+
+        <a class="btn btn-info" style="text-align: center; align-items: center;"
+            href="{% url 'bookings_view' evento_id=object.id %}">View Bookings</a>
         <button class="btn btn-danger" onclick="openModal()">Delete Event</button>
     </div>
     {% endif %}
     {% endfor %}
     {% endif %}
-    
-    
-</div>
 
+
+</div>
 
 
 <script>
@@ -127,27 +161,24 @@
         document.getElementById("confirmDeleteModal").style.display = "none";
     }
 
-    document.getElementById("confirmDeleteButton").addEventListener("click", function() {
+    document.getElementById("confirmDeleteButton").addEventListener("click", function () {
         fetch("{% url 'event_delete' pk=object.pk %}", {
             method: "POST",
             headers: {
                 "X-CSRFToken": "{{ csrf_token }}",
             }
         })
-        .then(response => {
-            if (response.ok) {
-                // Nascondi il modal di eliminazione
-                closeModal();
-                // Mostra il messaggio di conferma
-                document.getElementById("deleteConfirmation").style.display = "block";
-                // Reindirizza alla lista degli eventi dopo un breve ritardo
-                setTimeout(function() {
-                    window.location.href = "{% url 'list_events' %}";
-                }, 1300); // Ritardo di 2 secondi prima del reindirizzamento
-            } else {
-                alert("Si è verificato un errore durante l'eliminazione dell'evento.");
-            }
-        });
+            .then(response => {
+                if (response.ok) {
+                    closeModal();
+                    document.getElementById("deleteConfirmation").style.display = "block";
+                    setTimeout(function () {
+                        window.location.href = "{% url 'list_events' %}";
+                    }, 1300);
+                } else {
+                    alert("Deletion failed. If you have any problems, contact the administrator!");
+                }
+            });
     });
 </script>
 

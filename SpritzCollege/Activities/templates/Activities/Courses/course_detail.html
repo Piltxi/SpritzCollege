@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}{{ object.name }} - course{% endblock %}
+
+{% block content %}
+<style>
+    .custom-img {
+        width: 100%;
+        max-width: 100%; /* Usa tutto lo spazio disponibile nella colonna */
+        height: auto;
+        border: 5px solid red; /* Per verificare visivamente che il CSS venga applicato */
+    }
+    .back-link {
+        margin-left: 70px; /* Modifica questo valore secondo le tue preferenze */
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    .modal-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+
+<div id="confirmDeleteModal" class="modal">
+    <div class="modal-content">
+        <p>Are you sure you want to delete the course "{{ object }}"?</p>
+        <div class="modal-buttons">
+            <button id="confirmDeleteButton">Yes</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="deleteConfirmation" class="modal">
+    <div class="modal-content">
+        <p>Course successfully deleted! redirect in progress....</p>
+    </div>
+</div>
+<a class="back-link" href="{% url 'list_courses' %}">/Back to Course List/</a>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>{{ course.name }}</h1>
+            <p><strong>Description:</strong> {{ course.description }}</p>
+            <p><strong>Start Date:</strong> {{ course.start_date }}</p>
+            <p><strong>End Date:</strong> {{ course.end_date }}</p>
+            <p><strong>Recurrence Day:</strong> {{ course.recurrence_day }}</p>
+            <p><strong>Time:</strong> {{ course.time }}</p>
+            <p><strong>Category:</strong> {{ course.get_category_display }}</p>
+        </div>
+        <div class="col-md-4 d-flex align-items-center">
+            <img src="{{ course.image.url }}" class="custom-img" alt="{{ course.name }}">
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <a href="#" class="btn btn-secondary">Subscribe</a>
+            <br><br>
+            {% if request.user.is_authenticated %}
+            {% for group in request.user.groups.all %}
+            {% if group.name == 'culture' %}
+            <a class="btn btn-warning" href="{% url 'course_update' course.id %}">Update Course</a>
+            <button class="btn btn-danger" onclick="openModal()">Delete Course</button>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        
+        </div>
+    </div>
+   
+</div>
+
+<script>
+    function openModal() {
+        document.getElementById("confirmDeleteModal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("confirmDeleteModal").style.display = "none";
+    }
+
+    document.getElementById("confirmDeleteButton").addEventListener("click", function () {
+        fetch("{% url 'course_delete' pk=object.pk %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    closeModal();
+                    document.getElementById("deleteConfirmation").style.display = "block";
+                    setTimeout(function () {
+                        window.location.href = "{% url 'list_courses' %}";
+                    }, 1300);
+                } else {
+                    alert("Deletion failed. If you have any problems, contact the administrator!");
+                }
+            });
+    });
+</script>
+{% endblock %}
