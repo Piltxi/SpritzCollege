@@ -1,44 +1,88 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} {{title}} {% endblock %}
 
-{% load crispy_forms_tags %} 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> 
+{% block content %}
+{% load static %}
+<style>
+    body {
+        background-color: black;
+        color: red;
+    }
 
-{% block title %} Login - SpritzCollege {% endblock %}
+    .content {
+        padding: 20px;
+    }
 
-{% block content %} 
-<div class="container">
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .center {
+        flex: 1;
+    }
+
+    .center form {
+        height: auto;
+        padding: 20px;
+        background-color: white;
+        color: black;
+        border-radius: 10px;
+    }
+
+    .container img {
+        max-height: 300px;
+        width: auto;
+        object-fit: cover;
+        margin-left: 20px;
+    }
+</style>
+
+<div class="content">
     <h1 class="text-center">Login at SpritzCollege</h1>
 
-    {% if "notok" in request.GET.auth %}
-    <div class="alert alert-danger" role="alert", style="text-align: center;">
-        OOPs you do not have the necessary permissions. Log in with a accredited account, otherwise contact the administrator.
+    <div class="container">
+        <div class="center">
+
+            {% if "notok" in request.GET.auth %}
+            <div class="alert alert-danger" role="alert" , style="text-align: center;">
+                OOPs you do not have the necessary permissions. Log in with a accredited account, otherwise contact the
+                administrator.
+            </div>
+            {% endif %}
+    
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+    
+                <div class="form-row">
+                    <div class="col-md-6 offset-md-3">
+                        {{ form.username|as_crispy_field }}
+                    </div>
+                </div>
+    
+                <div class="form-row">
+                    <div class="col-md-6 offset-md-3">
+                        {{ form.password|as_crispy_field }}
+                    </div>
+                </div>
+    
+                <div class="form-row">
+                    <div class="col-md-6 offset-md-3">
+                        <input type="submit" class="btn btn-success btn-block" value="Login">
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <p>Do not have an account? <a href="{% url 'register' %}">Submit here</a>.</p>
+                </div>
+    
+            </form>
+        </div>
+
+        <div>
+            <img src="{% static 'login.jpeg' %}" alt="">
+        </div>
     </div>
-    {% endif %}
-
-    <form method="post" class="mt-4"> 
-        {% csrf_token %}
-
-        <div class="form-row">
-            <div class="col-md-6 offset-md-3">
-                {{ form.username|as_crispy_field }}
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="col-md-6 offset-md-3">
-                {{ form.password|as_crispy_field }}
-            </div>
-        </div>
-        
-        <div class="form-row">
-            <div class="col-md-6 offset-md-3">
-                <input type="submit" class="btn btn-success btn-block" value="Login">
-            </div>
-        </div>
-        <div class="text-center mt-3">
-            <p>Do not have an account? <a href="{% url 'register' %}">Submit here</a>.</p>
-        </div>
-        
-    </form>
 </div>
 {% endblock %}

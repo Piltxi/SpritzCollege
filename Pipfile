@@ -8,6 +8,7 @@ django = "*"
 pillow = "*"
 django-braces = "*"
 faker = "*"
+reportlab = "*"
 
 [dev-packages]
 

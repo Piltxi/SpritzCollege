@@ -138,5 +138,10 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 LOGIN_URL = "/login/?auth=notok"
-LOGIN_REDIRECT_URL = "/?login=ok"
+# LOGIN_REDIRECT_URL = "/?login=ok"
 LOGOUT_REDIRECT_URL = '/?logout=ok'
+LOGIN_REDIRECT_URL = "/home/"
+
+'''LOGIN_URL = "/login/?auth=notok"
+LOGIN_REDIRECT_URL = "/?login=ok"
+LOGOUT_REDIRECT_URL = '/?logout=ok'''

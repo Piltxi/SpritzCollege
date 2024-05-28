@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Modifica Prenotazione{% endblock %}
+
+{% block content %}
+
+<style>
+    @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+    .blinking {
+        animation: blink 1s infinite;
+        color: red;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+
+        function updateCountdown() {
+            if (countdown > 0) {
+                countdownElement.textContent = countdown + ' seconds';
+                countdown--;
+            } else {
+                window.location.href = "/";
+            }
+        }
+
+        setInterval(updateCountdown, 1000);
+        setTimeout(function() {
+            window.location.href = "/";
+        }, 5000);
+    });
+</script>
+
+<center>
+    <div style="display: flex; justify-content: center; align-items: center; padding: 20px 0;">
+        <img src="{% static 'home1.jpeg' %}" alt="" style="width: 60%; height: auto; margin-right: 20px;">
+        
+        <div>
+            <h1 style="font-size: 72px;">403</h1>
+            <h1 class="blinking">Forbidden</h1>
+            <p>You cannot access the resource you requested. If you believe this is an error, contact your administrator.</p>
+            <p>You will be redirected in <span id="countdown">5 seconds</span>.</p>
+            <a href="/">Back to home...</a>
+        </div>
+    </div>
+</center>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} {% endblock %}
+
+{% block content %}
+
+<ul>
+    {% for subscription in object_list %}
+    <li>{{ subscription.user.username }} is subscribed to {{ subscription.course.name }}
+        <a href="{% url 'subscription_update' subscription.pk %}">Edit</a>
+        <a href="{% url 'subscription_delete' subscription.pk %}">Delete</a>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

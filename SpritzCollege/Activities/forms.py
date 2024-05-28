@@ -3,14 +3,21 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from .models import *
 
-class SearchForm (forms.Form):
+class SearchForm(forms.Form):
     SEARCH_CHOICES = (
         ('Name', 'Name'),
         ('Description', 'Description'),
     )
+    STATUS_CHOICES = (
+        ('active', 'Active'),
+        ('cancelled', 'Cancelled'),
+        ('completed', 'Completed'),
+    )
 
-    search_string = forms.CharField(max_length=100, required=False)
-    search_where = forms.ChoiceField(choices=SEARCH_CHOICES, required=False)
+    search_string = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'about events'}), label='ask for something',)
+    search_where = forms.ChoiceField(choices=SEARCH_CHOICES, required=False, label='field')
+    status = forms.ChoiceField(choices=STATUS_CHOICES, required=False, initial='active', label='status')
+
 
 class EventForm(forms.ModelForm):
        class Meta:
@@ -53,3 +60,10 @@ class BookingForm(forms.ModelForm):
         super(BookingForm, self).__init__(*args, **kwargs)
         self.fields['num_seats'].initial = 1
         
+class SubscriptionForm(forms.ModelForm):
+    class Meta:
+        model = Subscription
+        fields = ['course', 'email']
+        widgets = {
+            'email': forms.EmailInput(attrs={'style': 'width: 300px; height: 40px;'}),
+        }

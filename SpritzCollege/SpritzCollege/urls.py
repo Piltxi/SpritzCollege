@@ -16,8 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path, include, reverse_lazy
-from .views import go_home, go_control_panel
-from .data_operations import delete_db, init_db
+from .views import go_home, go_control_panel, custom_login
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
@@ -33,6 +32,8 @@ urlpatterns = [
 
     path ("activities/", include('Activities.urls')),
     path ("profiles/", include('Profiles.urls')),
+    
+    path('custom_login/', custom_login, name='custom_login'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

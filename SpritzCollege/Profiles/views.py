@@ -1,9 +1,11 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from .forms import UserGroupForm, VisitorRegistrationForm
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from .forms import VisitorRegistrationForm, ProfileForm
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -56,7 +58,6 @@ def profile_edit(request):
 class MessageListView(LoginRequiredMixin, ListView):
     model = Message
     template_name = 'Profiles/messages.html'
-    context_object_name = 'messages'
 
     def get_queryset(self):
         return Message.objects.filter(user=self.request.user).order_by('-timestamp')
@@ -67,4 +68,6 @@ class MessageListView(LoginRequiredMixin, ListView):
         message_count = queryset.count()
         print(f"Number of messages: {message_count}")  # Stampa il numero di messaggi per debug
         context['message_count'] = message_count
+        context['title'] = "Notifications"
         return context
+    

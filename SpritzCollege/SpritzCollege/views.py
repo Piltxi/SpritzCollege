@@ -1,6 +1,29 @@
+from django.contrib.auth import authenticate, login
+from django.shortcuts import redirect
+from django.contrib import messages
+from .forms import CustomUserLoginForm
+
 from datetime import date
 from django.shortcuts import render
 from Activities.models import Event, Course
+
+def custom_login(request):
+    if request.method == 'POST':
+        form = CustomUserLoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                # Redirect to a success page.
+                return redirect('home')
+            else:
+                # Return an 'invalid login' error message.
+                messages.error(request, 'Invalid username or password.')
+    else:
+        form = CustomUserLoginForm()
+    return render(request, 'login.html', {'form': form})
 
 def go_home (request):
 

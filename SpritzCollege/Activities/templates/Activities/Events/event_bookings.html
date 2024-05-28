@@ -1,0 +1,156 @@
+
+
+{% extends "base.html" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    .modal-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+
+<div id="confirmDeleteModal" class="modal">
+    <div class="modal-content">
+        <p>Are you sure you want to delete the booking for "{{ item.event.name }}"?</p>
+        <div class="modal-buttons">
+            <button id="confirmDeleteButton">Yes</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="deleteConfirmation" class="modal">
+    <div class="modal-content">
+        <p>Books successfully deleted! redirect in progress....</p>
+    </div>
+</div>
+
+<h1 style="text-align: center;">{{ title }}</h1>
+
+{% if object_list.count == 0 %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="alert alert-info text-center" role="alert">
+            There are no bookings to display!
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Seats</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in object_list %}
+            <tr>
+                <td>{{ item.user }}</td>
+                <td> <a href="{% url 'event_detail' item.event.id %}">{{ item.event.name }}</a> </td>
+                <td>{{ item.event.date }}</td>
+                <td>{{ item.num_seats }}</td>
+                <td>
+                    <a href="#" class="btn btn-primary btn-sm">Print PDF</a>
+                    <button class="btn btn-danger btn-sm"
+                        onclick="openModal({{ item.id }}, '{{ item.event.name }}', {{ item.event.id }})">Delete</button>
+
+                    <script>console.log("View Type:", "{{ view_type }}");</script>
+                    {% if view_type == 'user' %}
+                    <a href="{% url 'user_event_booking_update' item.id %}" class="btn btn-primary btn-sm">Update</a>
+                    {% elif view_type == 'admin' %}
+                    <a href="{% url 'admin_event_booking_update' item.id %}" class="btn btn-primary btn-sm">Update</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<script>
+    let deleteId = null;
+    let eId = null;
+    let urldef = null;
+    let deleteUrl = null;
+
+    function openModal(id, eventName, eventId) {
+        console.log("ID:", id, "Event Name:", eventName, "Event ID:", eventId);  // Controlla che tutti i valori siano corretti
+        deleteId = id;
+        eId = eventId;
+        document.getElementById("confirmDeleteModal").style.display = "block";
+        document.querySelector("#confirmDeleteModal .modal-content p").textContent = `Are you sure you want to delete the booking for "${eventName}"?`;
+        document.getElementById("confirmDeleteModal").setAttribute("data-event-id", eventId);
+    }
+
+    function closeModal() {
+        document.getElementById("confirmDeleteModal").style.display = "none";
+    }
+
+    document.getElementById("confirmDeleteButton").addEventListener("click", function () {
+        const eventId = document.getElementById("confirmDeleteModal").getAttribute("data-event-id");
+        console.log("Event ID retrieved:", eventId);
+
+        if ("{{ view_type }}" === 'user') {
+            deleteUrl = `/activities/events/my-bookings/delete/${eventId}/`;
+        } else if ("{{ view_type }}" === 'admin') {
+            console.log("ciao ciao admin");
+            deleteUrl = `/activities/events/booking/adm/${eventId}/delete/`;
+        }
+
+        fetch(deleteUrl, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    closeModal();
+                    document.getElementById("deleteConfirmation").style.display = "block";
+
+                    if ("{{ view_type }}" === 'user') {
+                        urldef = "{% url 'user_event_booking_list' %}";
+                    } else if ("{{ view_type }}" === 'admin') {
+                        console.log("ciao ciao admin");
+                        urldef = `/activities/events/booking/${eventId}`;
+                    }
+
+                    setTimeout(function () {
+                        window.location.href = urldef
+                    }, 1300);
+                } else {
+                    alert("Deletion failed. If you have any problems, contact the administrator!");
+                }
+            });
+    });
+</script>
+{% endblock %}

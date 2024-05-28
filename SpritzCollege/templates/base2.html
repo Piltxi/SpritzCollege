@@ -1,6 +1,23 @@
-{% extends 'base2.html' %}
+{% extends 'base.html' %}
 
 {% block title %} {{title}} - SpritzCollege {% endblock %}
+
+{% block script %}
+{{ block.super }}
+<script>
+
+$(".sidenav a").each(function () {
+  var href = $(this).attr("href");
+  var hrefNormalized = href.replace(/\/$/, '');
+  
+  if (hrefNormalized === currentPathNormalized) {
+    $(this).addClass("active");
+  }
+});
+
+</script>
+
+{% endblock %}
 
 {% block content %}
 <style type="text/css">
@@ -99,14 +116,13 @@
 
   </div>
   <div class="main">
-    <form method="post">
-      <div class="col-md-6 offset-md-3">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <div class="col-md-6 offset-md-3">
-          <button type="submit">Register</button>
-        </div>
-    </form>
+   
+
+{% block panel %}
+
+
+{% endblock %}
+
   </div>
 </div>
 

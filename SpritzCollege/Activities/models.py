@@ -27,7 +27,6 @@ class Event(models.Model):
     status = models.CharField(max_length=20, choices=[('active', 'Active'), ('cancelled', 'Cancelled'), ('completed', 'Completed')], default='active')
 
     def save(self, *args, **kwargs):
-        print("Salvataggio dell'evento")  # Stampa per il debug
         super().save(*args, **kwargs)
 
     @property
@@ -116,3 +115,19 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Subscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='course_subscriptions')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='subscribers')
+    email = models.EmailField(max_length=254)
+    subscription_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'course')
+
+    def __str__(self):
+        return f'{self.user.username} subscribed to {self.course.name}'
+
+    def clean(self):
+        if self.course.start_date < timezone.now().date():
+            raise ValidationError("It is not possible to enroll in a course that has already started!")

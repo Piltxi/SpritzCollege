@@ -74,7 +74,10 @@
     </div>
     <div class="row mt-4">
         <div class="col-md-12">
-            <a href="#" class="btn btn-secondary">Subscribe</a>
+            
+            <a href="{% url 'course_pdf' course.id %}" class="btn btn-primary">Brochure</a>
+            <a href="{% url 'new_subscription' course.id %}" class="btn btn-success">Subscribe</a>
+            <a href="{% url 'course_subscriptions' course.id %}" class="btn btn-success">Subscription</a>
             <br><br>
             {% if request.user.is_authenticated %}
             {% for group in request.user.groups.all %}
