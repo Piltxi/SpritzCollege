@@ -4,10 +4,10 @@ from .models import Profile
 from django.contrib.auth.models import User, Group
 
 class VisitorRegistrationForm(UserCreationForm):
-    bio = forms.CharField(label='Bio', max_length=500, required=False)
-    location = forms.CharField(label='Location', max_length=30, required=False)
-    birth_date = forms.DateField(label='Birth Date', required=False)
-    profile_pic = forms.ImageField(label='Profile Picture', required=False)
+    bio = forms.CharField(label='Bio', widget=forms.Textarea(attrs={'rows': 4, 'cols': 40}), max_length=500, required=False)
+    location = forms.CharField(label='Locality', max_length=30, required=False)
+    birth_date = forms.DateField(label='Date of Birth', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+    profile_pic = forms.ImageField(label='Profile Pic', required=False)
 
     class Meta:
         model = User
@@ -17,7 +17,6 @@ class VisitorRegistrationForm(UserCreationForm):
         user = super().save(commit=False)
         if commit:
             user.save()
-            # Crea o aggiorna il profilo associato all'utente
             profile, created = Profile.objects.get_or_create(user=user)
             profile.bio = self.cleaned_data.get('bio', '')
             profile.location = self.cleaned_data.get('location', '')

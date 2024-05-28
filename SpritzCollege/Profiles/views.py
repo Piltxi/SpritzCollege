@@ -15,17 +15,10 @@ def register(request):
     if request.method == 'POST':
         form = VisitorRegistrationForm(request.POST)
         if form.is_valid():
-            # Salva l'utente
             user = form.save()
-
-            # Aggiungi l'utente al gruppo "visitors"
             visitors_group, created = Group.objects.get_or_create(name='visitors')
             user.groups.add(visitors_group)
-
-            # Effettua l'accesso automatico dell'utente
             login(request, user)
-
-            # Reindirizza l'utente alla home
             return redirect('home')
     else:
         form = VisitorRegistrationForm()
