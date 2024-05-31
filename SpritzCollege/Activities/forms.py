@@ -3,6 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from .models import *
 
+
 class SearchForm(forms.Form):
     SEARCH_CHOICES = (
         ('Name', 'Name'),
@@ -14,19 +15,37 @@ class SearchForm(forms.Form):
         ('completed', 'Completed'),
     )
 
-    search_string = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'about events'}), label='ask for something',)
-    search_where = forms.ChoiceField(choices=SEARCH_CHOICES, required=False, label='field')
-    status = forms.ChoiceField(choices=STATUS_CHOICES, required=False, initial='active', label='status')
+    search_string = forms.CharField(max_length=100, required=False, widget=forms.TextInput(
+        attrs={'placeholder': 'about events'}), label='ask for something',)
+    search_where = forms.ChoiceField(
+        choices=SEARCH_CHOICES, required=False, label='field')
+    status = forms.ChoiceField(
+        choices=STATUS_CHOICES, required=False, initial='active', label='status')
+
+    start_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        initial=timezone.now().date(),
+        label='Start Date'
+    )
+    end_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        initial=(timezone.now() + timezone.timedelta(days=30)).date(),
+        label='End Date'
+    )
 
 
 class EventForm(forms.ModelForm):
-       class Meta:
+    class Meta:
         model = Event
-        fields = ['name', 'description', 'date', 'price', 'max_capacity', 'place']
+        fields = ['name', 'description', 'date',
+                  'price', 'max_capacity', 'place']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4, 'cols': 60}),
             'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
+
 
 class CourseForm(forms.ModelForm):
     DAYS_OF_WEEK = [
@@ -38,13 +57,15 @@ class CourseForm(forms.ModelForm):
         ('Saturday', 'Saturday'),
         ('Sunday', 'Sunday'),
     ]
-    
-    recurrence_day = forms.ChoiceField(choices=DAYS_OF_WEEK, widget=forms.Select())
-    
+
+    recurrence_day = forms.ChoiceField(
+        choices=DAYS_OF_WEEK, widget=forms.Select())
+
     class Meta:
         model = Course
-        fields = ['name', 'description', 'start_date', 'end_date', 'recurrence_day', 'time', 'image', 'category']
-        
+        fields = ['name', 'description', 'start_date', 'end_date',
+                  'recurrence_day', 'time', 'image', 'category']
+
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date'}),
             'end_date': forms.DateInput(attrs={'type': 'date'}),
@@ -52,14 +73,17 @@ class CourseForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 4, 'cols': 40}),
         }
 
+
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
         fields = ['event', 'num_seats']
+
     def __init__(self, *args, **kwargs):
         super(BookingForm, self).__init__(*args, **kwargs)
         self.fields['num_seats'].initial = 1
-        
+
+
 class SubscriptionForm(forms.ModelForm):
     class Meta:
         model = Subscription
