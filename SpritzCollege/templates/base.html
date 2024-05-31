@@ -13,20 +13,20 @@
 
   {% if messages %}
   {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}" id="message-{{ forloop.counter }}" style="transition: opacity 1.5s;">
-        {{ message }}
-    </div>
+  <div class="alert alert-{{ message.tags }}" id="message-{{ forloop.counter }}" style="transition: opacity 1.5s;">
+    {{ message }}
+  </div>
   {% endfor %}
   <script>
-       {% for message in messages %}
-      setTimeout(function() {
-          var element = document.getElementById('message-{{ forloop.counter }}');
-          element.style.opacity = '0';
-          setTimeout(function() {
-              element.remove();
-          }, 1500);
+    {% for message in messages %}
+    setTimeout(function () {
+      var element = document.getElementById('message-{{ forloop.counter }}');
+      element.style.opacity = '0';
+      setTimeout(function () {
+        element.remove();
       }, 1500);
-      {% endfor %}
+    }, 1500);
+    {% endfor %}
   </script>
   {% endif %}
 
@@ -100,21 +100,16 @@
     .navbar-nav {
 
       display: flex;
-      /* Utilizza flexbox per allineare gli elementi */
       align-items: center;
-      /* Centra verticalmente gli elementi */
     }
 
     .nav-item {
       margin-right: 10px;
-      /* Aggiungi un margine tra gli elementi */
     }
 
     #logo {
       width: 50px;
-      /* Imposta la larghezza dell'immagine */
       height: auto;
-      /* Mantieni l'aspetto proporzionato */
     }
 
     .bottom-bar {
@@ -127,24 +122,22 @@
       background-color: red;
       padding: 20px 0;
       color: green;
-      /* Colore del testo bianco */
     }
+
     .alert {
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
-}
+      opacity: 1;
+      transition: opacity 0.5s ease-in-out;
+    }
 
-.alert.fadeout {
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
-}
-
+    .alert.fadeout {
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
   </style>
 </head>
 
 <body>
   <header class="top-bar">
-    <!-- Contenuto della barra superiore -->
 
     <nav class="navbar navbar-expand-lg navbar-light bg-warning text-white">
       <a class="navbar-brand" href="{% url 'home' %}">SpritzCollege</a>
@@ -191,6 +184,12 @@
 
       {% if user.is_authenticated %}
 
+      <!-- {% for group in request.user.groups.all %}
+    {% if group.name == 'culture' %}
+    <a href="{% url 'new_event' %}">add event</a>
+    <a href="{% url 'new_course' %}" class="sidebar-item">add course</a>
+    {% endif %}
+    {% endfor %} -->
 
       <!-- <img src="{% static 'bell.svg' %}" width="30" height="30" alt="" class="svg-image" style="margin: 10px;"> -->
 
@@ -274,13 +273,11 @@
   {% endif %}
 
   <main>
-    <!-- Contenuto specifico di ciascuna pagina -->
     {% block content %}
     {% endblock %}
   </main>
 
   <footer class="bottom-bar">
-    <!-- Contenuto del footer -->
     <div class="text-center">
       <a href="https://www.unimore.it/it">UNIMORE</a> - Tecnologie Web | <a href="{% url 'home' %}">SpritzCollege</a>
       284660

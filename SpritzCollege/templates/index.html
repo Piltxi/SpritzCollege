@@ -6,11 +6,42 @@
 {% load static %}
 
 <div style="display: flex; justify-content: center; padding: 20px 0;">
-    <img src="{% static 'home1.jpeg' %}" alt="Descrizione dell'immagine" style="width: 40%; height: auto;">
+    <img src="{% static 'home1.jpeg' %}" alt="iH_homepage" style="width: 40%; height: auto;">
 </div>
 
-<!-- events div -->
 
+<div style="margin-top: 20px; background-color: orangered; padding: 50px; margin-bottom: 30px;;">
+    <center>
+
+        {% if user.is_authenticated %}
+        <h1>Hello, {{ user.username }}!</h1>
+
+        {% if request.user.is_superuser %}
+        <h3>Welcome back, superman! <a href="/admin"> war room?</a></h3>
+
+
+        {% else %}
+        <!-- <h4>You have 56 messages</h4> -->
+        {% if request.user.groups.exists %}
+        {% for group in request.user.groups.all %}
+        {% if not forloop.first %}, {% endif %}
+        {{ group.name }}
+        {% endfor %}
+        {% else %}
+        <p>No groups detected</p>
+        {% endif %}
+        {% endif %}
+        {% else %}
+        <h1>Welcome at SpritzCollege!</h1>
+        <h3> <a href="{% url 'about_us' %}">Read about us</a>, otherwise watch our program!</h3>
+        {% endif %}
+
+
+    </center>
+</div>
+
+
+<!-- events div -->
 <div style=" top: 50%; left:50%; bottom: 50;">
     <div style="display: flex; justify-content: space-around;">
         <div style="width: 40%; background-color: lightblue; padding: 20px;">
@@ -20,12 +51,29 @@
                 <span style="font-size: 40px;">{{ events_list.count }}</span>
                 <span style="font-size: 24px;">events</span>
             </div>
-            {%else%}
+            {% else %}
+
+            {% if request.user.is_authenticated %}
+            {% for group in request.user.groups.all %}
+            {% if group.name == 'culture' %}
             <div class="col-md-6" style="margin: 20px auto 0;">
                 <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
-                    There are no scheduled events! <br> Come back later or <a href="{% url 'register' %}">sign up</a> to be the first to be informed!
+                    There are no scheduled events! <br> Come back later or... if you want, you can <a
+                        href="{% url 'new_event' %}">create a new event</a>!
                 </div>
             </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+            {% if not request.user.is_authenticated %}
+            <div class="col-md-6" style="margin: 20px auto 0;">
+                <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
+                    There are no scheduled events! <br> Come back later or <a href="{% url 'register' %}">sign up</a> to
+                    be the first to be informed!
+                </div>
+            </div>
+            {% endif %}
             {% endif %}
 
 
@@ -39,67 +87,66 @@
                 <span style="font-size: 40px;">{{ courses_list.count }}</span>
                 <span style="font-size: 24px;">courses</span>
             </div>
-            {%else%}
+
+            {% else %}
+
+            {% if request.user.is_authenticated %}
+            {% for group in request.user.groups.all %}
+            {% if group.name == 'culture' %}
             <div class="col-md-6" style="margin: 20px auto 0;">
                 <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
-                    There are no scheduled courses!  <br> Come back later or <a href="{% url 'register' %}">sign up</a> to be the first to be informed!
+                    There are no scheduled courses! <br> Come back later or... if you want, you can <a
+                        href="{% url 'new_course' %}">create a new course</a>!
                 </div>
             </div>
             {% endif %}
-        </div>
-    </div>
-
-    {% if user.is_authenticated %}
-    <div style="margin-top: 20px; background-color: lightgrey; padding: 50px;">
-        <center>
-            <h1>Hello, {{ user.username }}!</h1>
-
-            {% if request.user.is_superuser %}
-            <h3>Welcome back, superman! <a href="/admin"> war room?</a></h3>
-
-            {% else %}
-            <!-- <h4>You have 56 messages</h4> -->
-            {% if request.user.groups.exists %}
-            {% for group in request.user.groups.all %}
-            {% if not forloop.first %}, {% endif %}
-            {{ group.name }}
             {% endfor %}
-            {% else %}
-            <p>No groups detected</p>
+            {% endif %}
+
+            {% if not request.user.is_authenticated %}
+            <div class="col-md-6" style="margin: 20px auto 0;">
+                <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
+                    There are no scheduled courses! <br> Come back later or <a href="{% url 'register' %}">sign up</a>
+                    to be the first to be informed!
+                </div>
+            </div>
             {% endif %}
             {% endif %}
-        </center>
-    </div>
-    {% endif %}
 
 
-    <div style="display: flex; justify-content: space-around; margin-top: 20px;">
-        <div style="width: 40%; background-color: lightcoral; padding: 20px;">
-            {% if latest_events.count > 0 %}
-            <h2>Lastest Events</h2>
-            <ul>
-                {% for event in latest_events %}
-                <li>
-                    <a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
-                </li>
-                {% endfor %}
-                {% endif %}
-            </ul>
         </div>
 
-        <div style="width: 40%; background-color: lightyellow; padding: 20px;">
-            {% if latest_courses.count > 0 %}
-            <h2>Lastest Courses</h2>
-            <ul>
-                {% for course in latest_courses %}
-                <li>
-                    <a href="{% url 'course_detail' course.id %}">{{ course.name }}</a>
-                </li>
-                {% endfor %}
-                {% endif %}
-            </ul>
-        </div>
     </div>
+</div>
+
+
+<div style="display: flex; justify-content: space-around; margin-top: 20px;">
+    <div style="width: 40%; background-color: lightcoral; padding: 20px;">
+        {% if latest_events.count > 0 %}
+        <h2>Lastest Events</h2>
+        <ul>
+            {% for event in latest_events %}
+            <li>
+                <a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
+            </li>
+            {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+
+    <div style="width: 40%; background-color: lightyellow; padding: 20px;">
+        {% if latest_courses.count > 0 %}
+        <h2>Lastest Courses</h2>
+        <ul>
+            {% for course in latest_courses %}
+            <li>
+                <a href="{% url 'course_detail' course.id %}">{{ course.name }}</a>
+            </li>
+            {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+</div>
 </div>
 <!-- </div> -->
 {% endblock %}
