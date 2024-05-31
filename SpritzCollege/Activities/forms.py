@@ -80,8 +80,26 @@ class BookingForm(forms.ModelForm):
         fields = ['event', 'num_seats']
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(BookingForm, self).__init__(*args, **kwargs)
         self.fields['num_seats'].initial = 1
+
+    def clean(self):
+        cleaned_data = super().clean()
+        user = self.request.user if self.request else None
+        event = cleaned_data.get('event')
+        event_end_time = (event.date + event.duration) if event else None
+
+        if user and event:
+            if Booking.objects.filter(
+                user=user,
+                event__date__lt=(event.date + event.duration),
+                event__date__gte=event.date
+            ).exclude(event=event).exists():
+                raise ValidationError(
+                    'You already have a booking for another event during this time.')
+
+        return cleaned_data
 
 
 class SubscriptionForm(forms.ModelForm):
