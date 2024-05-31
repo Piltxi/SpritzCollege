@@ -6,7 +6,11 @@
 {% load static %}
 
 <style>
-    .btn-custom, .btn-primary, .btn-secondary, .btn-info, .btn-warning {
+    .btn-custom,
+    .btn-primary,
+    .btn-secondary,
+    .btn-info,
+    .btn-warning {
         /* background-color: #007bff;
         color: white; */
         border: none;
@@ -20,17 +24,30 @@
         border-radius: 5px;
         transition: background-color 0.3s, box-shadow 0.3s;
     }
-    .btn-custom:hover, .btn-custom:focus, .btn-primary:hover, .btn-primary:focus, .btn-secondary:hover, .btn-secondary:focus, .btn-info:hover, .btn-info:focus {
+
+    .btn-custom:hover,
+    .btn-custom:focus,
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-secondary:hover,
+    .btn-secondary:focus,
+    .btn-info:hover,
+    .btn-info:focus {
         /* background-color: #0056b3; */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         outline: none;
     }
+
     .search-form {
         position: sticky;
         top: 0;
-        height: 100vh;
+        border: 3px solid red;
+        padding: 15px;
+        border-radius: 5px;
     }
+
     .event-list-container {
+        border: 3px solid orange;
         max-height: 90vh;
         overflow-y: auto;
     }
@@ -46,44 +63,49 @@
 <div class="container">
     <h1 class="text-center">{{ title }} - SpritzCollege</h1>
 
-    {% if object_list.count == 0 %}
-        {% if not request.user.is_authenticated %}
-        <div class="alert alert-info text-center" role="alert">
-            There are no scheduled events! <br> Come back later or <a href="{% url 'register' %}">sign up</a> to be the first to be informed!
-        </div>
-        {% endif %}
+    {% if criteria %}
+    <h4 style="font-style: italic; color: green;" class="text-center">{{criteria}}</h4>
+    {% endif %}
 
-        {% if request.user.is_authenticated %}
-            {% for group in request.user.groups.all %}
-            {% if group.name == 'culture' %}
-            <div class="alert alert-info text-center" role="alert">
-                There are no scheduled events! <br> Come back later or... if you want, you can <a href="{% url 'new_event' %}">create a new event</a>!
-            </div>
-            {% endif %}
-            {% endfor %}
-        {% endif %}
+    {% if object_list.count == 0 %}
+    {% if not request.user.is_authenticated %}
+    <div class="alert alert-info text-center" role="alert">
+        There are no scheduled events! <br> Come back later or <a href="{% url 'register' %}">sign up</a> to be the
+        first to be informed!
+    </div>
+    {% endif %}
+
+    {% if request.user.is_authenticated %}
+    {% for group in request.user.groups.all %}
+    {% if group.name == 'culture' %}
+    <div class="alert alert-info text-center" role="alert">
+        There are no scheduled events! <br> Come back later or... if you want, you can <a
+            href="{% url 'new_event' %}">create a new event</a>!
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
     {% else %}
 
-    <!-- Struttura della pagina -->
     <div class="row">
         <div class="col-md-3">
             <form id="searchForm" class="search-form" method="get" action="">
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
-                <button type="button" onclick="resetForm()" class="btn btn-info"><i class="fas fa-sync"></i> Show all events</button>
+                <button type="button" onclick="resetForm()" class="btn btn-info"><i class="fas fa-sync"></i> Show all
+                    events</button>
                 <br>
                 {% if request.user.is_authenticated %}
-                    {% for group in request.user.groups.all %}
-                    {% if group.name == 'culture' %}
-                    <a href="{% url 'new_event' %}" class="btn btn-warning">New event</a>
-                    {% endif %}
-                    {% endfor %}
+                {% for group in request.user.groups.all %}
+                {% if group.name == 'culture' %}
+                <a href="{% url 'new_event' %}" class="btn btn-warning">New event</a>
+                {% endif %}
+                {% endfor %}
                 {% endif %}
                 <br>
             </form>
         </div>
 
-        <!-- Sezione Elenco Eventi con Scrolling -->
         <div class="col-md-9">
             <div class="event-list-container">
                 <div class="row justify-content-center mt-5">
@@ -91,7 +113,8 @@
                     <div class="col-md-4 mb-4">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title"><a href="{% url 'event_detail' event.id %}">{{ event.name }}</a></h5>
+                                <h5 class="card-title"><a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
+                                </h5>
                                 <p class="card-text">{{ event.description|truncatechars:100 }}</p>
                             </div>
                         </div>
@@ -102,6 +125,6 @@
         </div>
     </div>
     {% endif %}
-</div> <!-- Chiusura container principale -->
+</div>
 
 {% endblock %}
