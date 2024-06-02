@@ -25,7 +25,6 @@ urlpatterns = [
     path('calendar/', calendar_view, name='calendar_view'),
     path("events/", EventsList.as_view(), name="list_events"),
     path("courses/", CoursesList.as_view(), name="list_courses"),
-    path("about-as/", aboutAs_view, name="about_us"),
     
     #* EVENTS
     path('events/detail/<int:pk>/', EventDetail.as_view(), name='event_detail'), 

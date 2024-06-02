@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="it">
 
@@ -86,10 +87,12 @@
   <title>{% block title %}{% endblock %}</title>
   <link rel="icon" type="image/x-icon" href="{% static 'icon_spritz.png' %}">
   <style>
+
     body {
       margin-bottom: 100px;
       background-color: white;
       color: black;
+      height: 100%;
     }
 
     .active {
@@ -98,7 +101,6 @@
     }
 
     .navbar-nav {
-
       display: flex;
       align-items: center;
     }
@@ -113,7 +115,7 @@
     }
 
     .bottom-bar {
-      position: fixed;
+      position: fixed; 
       bottom: 0;
       width: 100%;
       display: flex;
@@ -165,20 +167,13 @@
         {% if request.user.is_authenticated %}
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'messages' %}">My Panel</a>
+            <a class="nav-link" href="{% url 'my_messages' %}">Control Room</a>
             <!-- <a class="nav-link" href="{% url 'profile_edit' %}">My Panel</a> -->
           </li>
       </div>
       </ul>
       <!-- <a href="{% url 'subscription_list' %}">calendar</a> -->
 
-      {% endif %}
-      {% if request.user.is_superuser %}
-
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'control_panel' %}">Control Panel</a>
-      </li>
-      <li><a href="{% url 'manage_user_groups' %}">Manage User Groups</a></li>
       {% endif %}
       </ul>
 

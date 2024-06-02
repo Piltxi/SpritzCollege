@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load filter %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="container">
+    <div class="left-pane">
+
+        <nav class="menu">
+            <div class="blinking-text">
+                Welcome to the Control Room, where every button leads to a world of possibilities!<br> <i>Give me a
+                    <span class="highlight">button</span> and I will lift your world!!!</i>
+            </div>
+            <ul>
+                <li>
+                    <a href="{% url 'profile_edit' %}">
+                        <i class="fas fa-user"></i>
+                        My Profile
+                    </a>
+                </li>
+                <!-- <li class="centered"> -->
+                <li>
+                    <a href="{% url 'my_messages' %}">
+                        <i class="fas fa-envelope"></i>
+                        Notifications
+                    </a>
+                </li>
+
+
+                <li>
+                    <a href="{% url 'user_event_booking_list' %}">
+                        <i class="fas fa-calendar-check"></i>
+                        My Bookings
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'user_event_booking_list' %}">
+                        <i class="fa fa-chalkboard-teacher"></i>
+                        My Subscriptions
+                    </a>
+                </li>
+                {% if request.user|has_group:"culture" %}
+                <li>
+                    <a href="{% url 'new_event' %}">
+                        <i class="fas fa-calendar-plus"></i>
+                        Add Event
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'new_course' %}">
+                        <i class="fas fa-book-open"></i>
+                        Add Course
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'new_course' %}">
+                        <i class="fa fa-hand-paper"></i>
+                        Event Report
+                    </a>
+                </li>
+                {% endif %}
+                {% if request.user|has_group:"administration" %}
+                <li>
+                    <a href="{% url 'manage_membership' %}">
+                        <i class="fa fa-genderless"></i>
+                        User Management
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    <div class="right-pane">
+
+        {% block panel %}
+
+
+        {% endblock %}
+
+    </div>
+</div>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: darkred;
+    }
+
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .highlight {
+        color: yellow;
+    }
+
+    .blinking-text {
+        text-align: center;
+        animation: blink 1s infinite;
+        color: orange;
+        padding-bottom: 20px;
+    }
+
+    .container {
+        display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 80vh;
+    width: 80vw;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .left-pane {
+        border: 2px solid yellow; 
+        margin-right: 10px; 
+        flex: 1;
+        background-color: #2c3e50;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        max-height: 80vh;
+
+    }
+
+    .right-pane {
+        border: 5px solid green; 
+        justify-content: center;
+        align-items: center;
+        flex: 2;
+        padding: 20px;
+        max-height: 80vh;
+        width: auto;
+        overflow-y: auto;
+        background-color: #ecf0f1;
+    }
+
+    .menu ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .menu li {
+        display: flex;
+        justify-content: center;
+    }
+
+    .menu li.centered {
+        grid-column: span 2;
+        display: flex;
+        justify-content: center;
+    }
+
+    .menu a {
+        text-decoration: none;
+        padding: 20px;
+        background-color: #34495e;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: background-color 0.3s, transform 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .menu a:hover {
+        background-color: red;
+        transform: translateY(-5px);
+    }
+
+    .menu a i {
+        font-size: 24px;
+    }
+</style>
+
+{% endblock %}

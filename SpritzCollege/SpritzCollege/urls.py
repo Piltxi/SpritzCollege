@@ -15,27 +15,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path, include, reverse_lazy
-from .views import go_home, go_control_panel, custom_login
+from django.urls import path, re_path, include
+from .views import CustomLoginView, go_home, aboutAs_view
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
-
+from SpritzCollege.data_operations import delete_db, test_eventsbooking
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
     re_path(r"^$|^\/$|^home\/$", go_home, name="home"),
     
-    path("login/", auth_views.LoginView.as_view(), name="login"),
+    path('login/', CustomLoginView.as_view(), name='login'),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     
-    path ("control/", go_control_panel, name="control_panel"),
-
+    path("about-as/", aboutAs_view, name="about_us"),
+    
     path ("activities/", include('Activities.urls')),
     path ("profiles/", include('Profiles.urls')),
     
-    path('custom_login/', custom_login, name='custom_login'),
-
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # delete_db ()
 # init_db ()
+# test_eventsbooking()

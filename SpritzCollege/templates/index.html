@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load filter %}
 
 {% block title %} {{title}} - SpritzCollege {% endblock %}
 
@@ -12,6 +13,12 @@
 
 <div style="margin-top: 20px; background-color: orangered; padding: 50px; margin-bottom: 30px;;">
     <center>
+
+        <!-- {% if request.user|has_group:"culture" %}
+        <p>User belongs to my group
+            {% else %}
+        <p>User doesn't belong to mygroup</p>
+        {% endif %} -->
 
         {% if user.is_authenticated %}
         <h1>Hello, {{ user.username }}!</h1>
@@ -36,7 +43,7 @@
         <h3> <a href="{% url 'about_us' %}">Read about us</a>, otherwise watch our program!</h3>
         {% endif %}
 
-
+        <h3> <a href="{% url 'about_us' %}">TEST</a></h3>
     </center>
 </div>
 
@@ -53,26 +60,30 @@
             </div>
             {% else %}
 
-            {% if request.user.is_authenticated %}
-            {% for group in request.user.groups.all %}
-            {% if group.name == 'culture' %}
+
+            {% if request.user|has_group:"culture" %}
             <div class="col-md-6" style="margin: 20px auto 0;">
                 <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
                     There are no scheduled events! <br> Come back later or... if you want, you can <a
                         href="{% url 'new_event' %}">create a new event</a>!
                 </div>
             </div>
-            {% endif %}
-            {% endfor %}
-            {% endif %}
-
-            {% if not request.user.is_authenticated %}
+            {% else %}
+            {% if request.user.is_authenticated %}
+            <div class="col-md-6" style="margin: 20px auto 0;">
+                <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
+                    There are no scheduled events! <br> Come back later!
+                </div>
+            </div>
+            {% else %}
             <div class="col-md-6" style="margin: 20px auto 0;">
                 <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
                     There are no scheduled events! <br> Come back later or <a href="{% url 'register' %}">sign up</a> to
                     be the first to be informed!
                 </div>
             </div>
+            {% endif %}
+
             {% endif %}
             {% endif %}
 
@@ -90,26 +101,29 @@
 
             {% else %}
 
-            {% if request.user.is_authenticated %}
-            {% for group in request.user.groups.all %}
-            {% if group.name == 'culture' %}
+            {% if request.user|has_group:"culture" %}
             <div class="col-md-6" style="margin: 20px auto 0;">
                 <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
                     There are no scheduled courses! <br> Come back later or... if you want, you can <a
                         href="{% url 'new_course' %}">create a new course</a>!
                 </div>
             </div>
-            {% endif %}
-            {% endfor %}
-            {% endif %}
-
-            {% if not request.user.is_authenticated %}
+            {% else %}
+            {% if request.user.is_authenticated %}
             <div class="col-md-6" style="margin: 20px auto 0;">
                 <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
-                    There are no scheduled courses! <br> Come back later or <a href="{% url 'register' %}">sign up</a>
-                    to be the first to be informed!
+                    There are no scheduled courses! <br> Come back later!
                 </div>
             </div>
+            {% else %}
+            <div class="col-md-6" style="margin: 20px auto 0;">
+                <div class="alert alert-info" role="alert" style="align-items: center; text-align: center;">
+                    There are no scheduled courses! <br> Come back later or <a href="{% url 'register' %}">sign up</a> to
+                    be the first to be informed!
+                </div>
+            </div>
+            {% endif %}
+
             {% endif %}
             {% endif %}
 

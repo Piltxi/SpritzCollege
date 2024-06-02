@@ -1,10 +1,31 @@
 import random
 from faker import Faker
+from django.utils import timezone
+from decimal import Decimal
 import json
 from datetime import datetime
 from django.contrib.auth.models import Group
+import pytz
 
 from Activities.models import Event, Course
+
+def test_eventsbooking (): 
+    timezone = pytz.timezone('Europe/Rome')
+    ev1 = Event.objects.create(
+            name="Event Test 1",
+            date = datetime(year=2024, month=6, day=12, hour=8, minute=31, tzinfo=timezone),
+            place="conference room",
+            description = "ev1 for booking test",
+            price=Decimal('0.00')
+        )
+    
+    ev2 = Event.objects.create(
+            name="Event Test 2",
+            date = datetime(year=2024, month=6, day=12, hour=8, minute=31, tzinfo=timezone),
+            price=Decimal('0.00'),
+            description = "ev2 for booking test",
+            place="cinema"
+        )
 
 def create_user_groups ():
     # directors, administration, culture, students, visitors, maintainers

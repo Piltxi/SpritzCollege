@@ -11,10 +11,13 @@
         margin: 0 auto;
     }
 </style>
+
+<h1 class="text-center" style="padding-bottom: 30px;">{{ title }} - SpritzCollege</h1>
+
 <div id='calendar'></div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
@@ -23,20 +26,20 @@
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
-            events: {{ calendar_data|safe }},
-            eventClick: function(info) {
-                var eventType = info.event.extendedProps.type;
-                var eventId = info.event.id;
-                if (eventType === 'course') {
-                    window.location.href = '{% url "course_detail" 0 %}'.replace('0', eventId);
-                } else if (eventType === 'event') {
-                    window.location.href = '{% url "event_detail" 0 %}'.replace('0', eventId);
-                } else {
-                    alert('Unknown event type');
-                }
+            events: {{ calendar_data| safe }},
+        eventClick: function (info) {
+            var eventType = info.event.extendedProps.type;
+            var eventId = info.event.id;
+            if (eventType === 'course') {
+                window.location.href = '{% url "course_detail" 0 %}'.replace('0', eventId);
+            } else if (eventType === 'event') {
+                window.location.href = '{% url "event_detail" 0 %}'.replace('0', eventId);
+            } else {
+                alert('Unknown event type');
             }
+        }
         });
-        calendar.render();
+    calendar.render();
     });
 </script>
 {% endblock %}

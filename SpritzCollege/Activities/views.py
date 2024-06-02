@@ -19,11 +19,6 @@ from reportlab.pdfgen import canvas
 from django.utils import timezone
 
 
-def aboutAs_view(request):
-    context = {'title': 'About Us - SpritzCollege'}
-    return render(request, 'about.html', context)
-
-
 class CultureGroupRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.groups.filter(name='culture').exists()
@@ -55,7 +50,6 @@ def string_for_title(search_string, search_where, status, start_date, end_date):
             out += f" to {end_date}"
 
     return out
-
 
 class EventsList(ListView):
     model = Event
@@ -132,7 +126,6 @@ class EventsList(ListView):
             context['title'] = "Results - Events"
 
         return context
-
 
 class CoursesList(ListView):
     model = Course
@@ -305,8 +298,6 @@ def book_event(request, event_id):
     return render(request, 'Activities/master_activity.html', {'title': f'{event.name} \u2192 Book Event', 'form': form, 'event': event})
 
 # calendar ________________________________________________________
-
-
 def generate_recurrence_dates(course):
     recurrence_dates = []
     current_date = course.start_date
@@ -349,9 +340,9 @@ def calendar_view(request):
     return render(request, 'Activities/calendar.html', context)
 # calendar ________________________________________________________
 
+
+
 # BOOKING USER VIEWS ______________________________________________
-
-
 class UserBookingListView(LoginRequiredMixin, ListView):
     model = Booking
     template_name = 'Activities/Events/event_bookings.html'
@@ -364,8 +355,7 @@ class UserBookingListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = f"{
-            self.request.user.username}  \u2192  Booking Panel"
+        context['title'] = f"{self.request.user.username}  \u2192  Booking Panel"
         context['view_type'] = "user"
         return context
 
@@ -471,8 +461,6 @@ class UserBookingDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
     model = Booking
     template_name = 'Activities/Events/event_bookings.html'
     success_url = reverse_lazy('user_event_booking_list')
-
-    # print ("siamo qui")
 
     def test_func(self):
         self.object = self.get_object()

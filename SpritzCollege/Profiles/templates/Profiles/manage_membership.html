@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load filter %}
+
+{% block title %} Manage Group Membership - SpritzCollege {% endblock %}
+
+{% block content %}
+{% load static %}
+
+<style>
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .blinking-text {
+        animation: blink 1s infinite;
+        color: orange;
+    }
+
+    body,
+    html {
+        height: 100%;
+        margin: 0;
+        background-color: black;
+    }
+
+    .container {
+        color: white;
+        max-width: 600px;
+        width: 100%;
+        box-sizing: border-box;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-wrapper {
+        display: flex;
+        border: 5px solid;
+        padding: 10px;
+        border-color: yellow;
+    }
+
+    .form-container {
+        right: 50%;
+        margin-right: 20px;
+    }
+
+    .groups-container {
+        margin-left: auto;
+        border-color: black;
+    }
+</style>
+
+<center>
+    <h1 style="color: red;">Manage Group Membership</h1>
+</center>
+
+<div class="container">
+    <center class="blinking-text">!hi boss, be very careful what you do here because you'll break all!</center>
+    <div class="content-wrapper">
+        <div class="form-container">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <br>
+                <center><button type="submit">update</button></center>
+            </form>
+        </div>
+
+        <div class="groups-container">
+            <h3>current(s) of <i>{{ form.cleaned_data.user.username }}</i></h3>
+            {% if form.cleaned_data.user %}
+            <ul>
+                {% if form.cleaned_data.user.groups.all.count > 0 %}
+                {% for group in form.cleaned_data.user.groups.all %}
+                <li>{{ group.name }}</li>
+                {% endfor %}
+                {% else %}
+                <h4><i class="blinking-text", style="color: blue;">single</i></h3>
+                {% endif %} 
+            </ul>
+            {% endif %} 
+           
+        </div>
+    </div>
+    <center style="color: rebeccapurple;">!I hope I didn't break anything, can I go back to the <a href="{% url 'home' %}">home page</a>?</center>
+</div>
+{% endblock %}

@@ -9,6 +9,7 @@ pillow = "*"
 django-braces = "*"
 faker = "*"
 reportlab = "*"
+pytz = "*"
 
 [dev-packages]
 

@@ -1,35 +1,55 @@
-{% extends "base2.html" %}
+{% extends 'base-panel.html' %}
+{% load filter %}
 
-{% block title %}{{ title }} {% endblock %}
+{% block title %} {{ title }} {% endblock %}
 
 {% block panel %}
-<h1 class="text-center"> {{request.user.username}}  - My notifications</h1>
+
+    <div class="right-pane">
+        <h2>My notifications</h2>
+        <a href="{% url 'delete_messages' %}">reset</a>
+        <div class="messages-container">
+            {% for message in object_list %}
+            <div class="message-box">
+                <div class="message-header">
+                    <h3>{{ message.title }}</h3>
+                    <span class="timestamp">{{ message.timestamp|date:"Y-m-d H:i" }}</span>
+                </div>
+                <p>{{ message.content }}</p>
+            </div>
+            {% empty %}
+            <p>No messages found.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
 <style>
-  .message-card {
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 10px;
-    background-color: white;
-  }
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
+    .messages-container {
+      display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .message-box {
+       background-color: #ffeb3b;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, background-color 0.3s;
+    }
+
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .timestamp {
+        font-size: 0.9em;
+        color: #888;
+    }
 </style>
-
-
-<ul>
-  
-  {% for message in object_list %}
-  <li class="message-card">
-    <strong>{{ message.title }}</strong> - <small>{{ message.timestamp }}</small>
-    <p>{{ message.content }}</p>
-  </li>
-  {% empty %}
-  <li>No messages yet.</li>
-  {% endfor %}
-</ul>
 
 {% endblock %}
