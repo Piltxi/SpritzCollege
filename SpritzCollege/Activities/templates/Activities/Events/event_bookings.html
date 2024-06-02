@@ -94,14 +94,13 @@
                 <td>{{ item.num_seats }}</td>
                 <td>
                     <a href="#" class="btn btn-primary btn-sm">Print PDF</a>
-                    <button class="btn btn-danger btn-sm" onclick="openModal({{ item.id }}, '{{ item.event.name }}', '{{ view_type }}')">Delete</button>
+                    <button class="btn btn-danger btn-sm"
+                        onclick="openModal({{ item.id }}, '{{ item.event.name }}', '{{ view_type }}')">Delete</button>
 
                     <script>console.log("View Type:", "{{ view_type }}");</script>
                     {% if view_type == 'user' %}
-                    ciao user
                     <a href="{% url 'user_event_booking_update' item.id %}" class="btn btn-primary btn-sm">Update</a>
                     {% elif view_type == 'admin' %}
-                    ciao admin
                     <a href="{% url 'admin_event_booking_update' item.id %}" class="btn btn-primary btn-sm">Update</a>
                     {% endif %}
                 </td>
