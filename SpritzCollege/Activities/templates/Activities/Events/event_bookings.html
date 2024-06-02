@@ -41,7 +41,7 @@
 
 <div id="confirmDeleteModal" class="modal">
     <div class="modal-content">
-        <p>Are you sure you want to delete the booking for "{{ item.event.name }}"?</p>
+        <p>Are you sure you want to delete the booking for "<span id="eventName"></span>"?</p>
         <div class="modal-buttons">
             <button id="confirmDeleteButton">Yes</button>
             <button onclick="closeModal()">Cancel</button>
@@ -51,12 +51,17 @@
 
 <div id="deleteConfirmation" class="modal">
     <div class="modal-content">
-        <p>Books successfully deleted! redirect in progress....</p>
+        <p>Booking successfully deleted! Redirecting...</p>
     </div>
 </div>
 
 <h1 style="text-align: center;">{{ title }}</h1>
+
+{% if view_type == 'user' %}
 <a class="back-link" href="{% url 'my_messages' %}">/control room/</a>
+{% elif view_type == 'admin' %}
+<a class="back-link" href="{% url 'list_events' %}">/events list/</a>
+{% endif %}
 
 {% if object_list.count == 0 %}
 <div class="row justify-content-center mt-5">
@@ -89,15 +94,14 @@
                 <td>{{ item.num_seats }}</td>
                 <td>
                     <a href="#" class="btn btn-primary btn-sm">Print PDF</a>
-                    <button class="btn btn-danger btn-sm"
-                        onclick="openModal({{ item.id }}, '{{ item.event.name }}', {{ item.event.id }})">Delete</button>
+                    <button class="btn btn-danger btn-sm" onclick="openModal({{ item.id }}, '{{ item.event.name }}', '{{ view_type }}')">Delete</button>
 
                     <script>console.log("View Type:", "{{ view_type }}");</script>
                     {% if view_type == 'user' %}
-                    ciao ciao user
+                    ciao user
                     <a href="{% url 'user_event_booking_update' item.id %}" class="btn btn-primary btn-sm">Update</a>
                     {% elif view_type == 'admin' %}
-                     ciao ciao admin
+                    ciao admin
                     <a href="{% url 'admin_event_booking_update' item.id %}" class="btn btn-primary btn-sm">Update</a>
                     {% endif %}
                 </td>
@@ -110,17 +114,13 @@
 
 <script>
     let deleteId = null;
-    let eId = null;
-    let urldef = null;
-    let deleteUrl = null;
+    let deleteType = null;
 
-    function openModal(id, eventName, eventId) {
-        console.log("ID:", id, "Event Name:", eventName, "Event ID:", eventId);
+    function openModal(id, eventName, viewType) {
         deleteId = id;
-        eId = eventId;
+        deleteType = viewType;
+        document.getElementById("eventName").textContent = eventName;
         document.getElementById("confirmDeleteModal").style.display = "block";
-        document.querySelector("#confirmDeleteModal .modal-content p").textContent = `Are you sure you want to delete the booking for "${eventName}"?`;
-        document.getElementById("confirmDeleteModal").setAttribute("data-event-id", eventId);
     }
 
     function closeModal() {
@@ -128,14 +128,12 @@
     }
 
     document.getElementById("confirmDeleteButton").addEventListener("click", function () {
-        const eventId = document.getElementById("confirmDeleteModal").getAttribute("data-event-id");
-        console.log("Event ID retrieved:", eventId);
+        let deleteUrl = "";
 
-        if ("{{ view_type }}" === 'user') {
-            deleteUrl = `/activities/events/my-bookings/delete/${eventId}/`;
-        } else if ("{{ view_type }}" === 'admin') {
-            console.log("ciao ciao admin");
-            deleteUrl = `/activities/events/booking/adm/${eventId}/delete/`;
+        if (deleteType === 'user') {
+            deleteUrl = `{% url 'user_event_booking_delete' pk=0 %}`.replace('/0/', `/${deleteId}/`);
+        } else if (deleteType === 'admin') {
+            deleteUrl = `{% url 'admin_booking_delete' pk=0 %}`.replace('/0/', `/${deleteId}/`);
         }
 
         fetch(deleteUrl, {
@@ -148,16 +146,8 @@
                 if (response.ok) {
                     closeModal();
                     document.getElementById("deleteConfirmation").style.display = "block";
-
-                    if ("{{ view_type }}" === 'user') {
-                        urldef = "{% url 'user_event_booking_list' %}";
-                    } else if ("{{ view_type }}" === 'admin') {
-                        console.log("ciao ciao admin");
-                        urldef = `/activities/events/booking/${eventId}`;
-                    }
-
                     setTimeout(function () {
-                        window.location.href = urldef
+                        window.location.href = "{% url 'list_events' %}";
                     }, 1300);
                 } else {
                     alert("Deletion failed. If you have any problems, contact the administrator!");
