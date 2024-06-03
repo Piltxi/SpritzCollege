@@ -28,10 +28,10 @@ from io import BytesIO
 from .models import Event, Course, Booking, Subscription
 from .forms import BookingForm, EventForm, SearchForm, CourseForm, SubscriptionForm
 
-
 class CultureGroupRequiredMixin(UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.groups.filter(name='culture').exists()
+        user = self.request.user
+        return user.is_superuser or user.groups.filter(name='culture').exists()
 
 
 def str_criteriasearch(search_string, search_where, status, start_date, end_date):
@@ -248,7 +248,7 @@ class AddCourse (GroupRequiredMixin, CreateView):
     group_required = ["culture"]
     form_class = CourseForm
     template_name = "Activities/master_activity.html"
-    success_url = reverse_lazy("home")
+    success_url = reverse_lazy("list_courses")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
