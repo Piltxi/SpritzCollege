@@ -1,0 +1,81 @@
+<!-- profile_update.html -->
+{% extends "base-panel.html" %}
+
+{% block panel %}
+  <div class="custom-container mt-4">
+    <div class="custom-card mb-4">
+      <div class="custom-card-header">
+        <h2>Update Profile</h2>
+      </div>
+      <div class="custom-card-body">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="custom-form-group">
+            {{ form.as_p }}
+          </div>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="custom-card mb-4">
+      <div class="custom-card-header">
+        <h2>Change Password</h2>
+      </div>
+      <div class="custom-card-body">
+        <form method="post" action="{% url 'password_change' %}">
+          {% csrf_token %}
+          <div class="custom-form-group">
+            {{ password_form.as_p }}
+          </div>
+          <button type="submit" class="btn btn-warning">Change password</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="custom-card mb-4">
+      <div class="custom-card-header">
+        <h2>Delete Account</h2>
+      </div>
+      <div class="custom-card-body">
+        <form method="post" action="{% url 'profile_delete' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Delete my account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+<style>
+
+
+.custom-container {
+  margin-top: 1rem;
+}
+
+.custom-card {
+  margin-bottom: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+}
+
+.custom-card-header {
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 0;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.custom-card-body {
+  padding: 1.25rem;
+}
+
+.custom-form-group {
+  margin-bottom: 1rem;
+}
+
+</style>
+{% endblock %}

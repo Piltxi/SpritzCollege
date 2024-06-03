@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm
 from .models import Profile
 from django.contrib.auth.models import User, Group
 
@@ -53,15 +54,6 @@ class UserGroupForm(forms.Form):
             print (f"Campi ric: {user_instance.groups.all()}")
             self.fields['groups'].queryset = user_instance.groups.all()
     
-class ProfileUpdateForm (forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['bio', 'location', 'birth_date', 'profile_pic', 'interests']
-        widgets = {
-            'birth_date': forms.DateInput(attrs={'type': 'date'}),
-            'interests': forms.CheckboxSelectMultiple()
-        }
-        
 class GroupMembershipForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.all())
     group = forms.ModelChoiceField(queryset=Group.objects.all())
@@ -69,8 +61,32 @@ class GroupMembershipForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(GroupMembershipForm, self).__init__(*args, **kwargs)
-        self.fields['user'].widget.attrs['onchange'] = 'this.form.submit()'  # Submit form on user selection
+        self.fields['user'].widget.attrs['onchange'] = 'this.form.submit()'
 
     def set_user_groups(self, user):
         self.fields['group'].queryset = Group.objects.exclude(user=user)
         self.fields['group'].initial = user.groups.all()
+        
+class ProfileForm(forms.ModelForm):
+    interests = forms.MultipleChoiceField(
+        choices=Profile.CATEGORY_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
+    class Meta:
+        model = Profile
+        fields = ['bio', 'location', 'birth_date', 'profile_pic', 'interests']
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            initial_interests = self.instance.interests
+            if initial_interests:
+                self.fields['interests'].initial = initial_interests.split(',')
+
+    def clean_interests(self):
+        return ','.join(self.cleaned_data['interests'])
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    pass

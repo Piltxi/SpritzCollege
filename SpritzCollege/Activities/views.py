@@ -151,7 +151,7 @@ class CoursesList(ListView):
 def calendar_spritzcollege_view (request): 
     events = Event.objects.all()
     courses = Course.objects.all()
-    return calendar_view(request, events, courses)
+    return calendar_view(request, events, courses, None)
 
 def generate_recurrence_dates(course):
     recurrence_dates = []
@@ -162,7 +162,7 @@ def generate_recurrence_dates(course):
         current_date += timedelta(days=1)
     return recurrence_dates
 
-def calendar_view(request, events, courses):
+def calendar_view(request, events, courses, title):
     calendar_data = []
 
     for event in events:
@@ -184,11 +184,14 @@ def calendar_view(request, events, courses):
                 'description': course.description,
                 'type': 'course'
             })
-
+    
     context = {
-        'title': 'Calendar',
-        'calendar_data': calendar_data
+        'calendar_data': calendar_data,
+        'title': title if title else 'Calendar'
     }
+    
+    context['calendar_data'] = calendar_data
+   
     return render(request, 'Activities/calendar.html', context)
 # * ______________  ACTIVITIES::PUBLIC  _______________________________
 
@@ -383,7 +386,10 @@ def generate_booking_pdf(request, booking_id):
 def calendar_user_view (request): 
     events = Event.objects.filter(bookings__user=request.user)
     courses = Course.objects.filter(subscribers__user=request.user)
-    return calendar_view(request, events, courses)
+    
+    title = f"{request.user}'s calendar"
+    
+    return calendar_view(request, events, courses, title)
 
 class UserBookingListView(LoginRequiredMixin, ListView):
     model = Booking

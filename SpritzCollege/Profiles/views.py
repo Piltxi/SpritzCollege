@@ -3,11 +3,23 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
-from .forms import UserGroupForm, VisitorRegistrationForm, ProfileUpdateForm, GroupMembershipForm
+from .forms import UserGroupForm, VisitorRegistrationForm, GroupMembershipForm
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.views.generic import ListView, UpdateView, TemplateView, View
+from django.views.generic import ListView, UpdateView, TemplateView, View, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Message, User
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.utils.decorators import method_decorator
+from django.views.generic import UpdateView, FormView
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Profile
+from .forms import ProfileForm, CustomPasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.shortcuts import render, redirect
 
 from braces.views import GroupRequiredMixin
 from .models import Profile
@@ -57,17 +69,6 @@ class ManageUserGroupsView(GroupRequiredMixin, View):
         
         return render(request, 'Activities/master_activity.html', {'form': form})
 
-@login_required
-def profile_edit(request):
-    if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        if form.is_valid():
-            form.save()
-            return redirect('profile')
-    else:
-        form = ProfileUpdateForm(instance=request.user.profile)
-    return render(request, 'control_panel.html', {'form': form, 'title': "My Profile"})
-
 class MessageListView(LoginRequiredMixin, ListView):
     model = Message
     template_name = 'Profiles/messages.html'
@@ -83,17 +84,6 @@ class MessageListView(LoginRequiredMixin, ListView):
         context['message_count'] = message_count
         context['title'] = "My Notifications - SpritzCollege"
         return context
-    
-class ProfileUpdateView(LoginRequiredMixin, UpdateView):
-    model = User
-    form_class = ProfileUpdateForm
-    template_name = 'A/profile_form.html'
-
-    def get_object(self, queryset=None):
-        return self.request.user.profile
-
-    def get_success_url(self):
-        return reverse_lazy("profile")
 
 @group_required('administration')
 def manage_group_membership(request):
@@ -112,23 +102,10 @@ def manage_group_membership(request):
     else:
         form = GroupMembershipForm()
     return render(request, 'Profiles/manage_membership.html', {'form': form})
-
-#! deprecated _________________________
-class MyPanelView(LoginRequiredMixin, TemplateView):
-    template_name = "Profiles/my_panel.html"
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['title'] = f"{user.username} \u2192 Control Room"
-        print ("ctx: ", context['title'])
-        return context
-#! deprecated _________________________
     
 @login_required
 def delete_all_messages(request):
     user = request.user
-    print ("\n\nciao ciao ciao\n\n")
     
     if request.method == 'POST':
         Message.objects.filter(user=user).delete()
@@ -137,3 +114,55 @@ def delete_all_messages(request):
         return redirect('my_messages')
     
     return render(request, 'Profiles/messages.html')
+
+@method_decorator(login_required, name='dispatch')
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = Profile
+    form_class = ProfileForm
+    template_name = 'Profiles/profile_update.html'
+    success_url = reverse_lazy('profile_update')
+
+    def get_object(self, queryset=None):
+        return self.request.user.profile
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if 'password' in self.request.POST:
+            password_form = CustomPasswordChangeForm(self.request.user, self.request.POST)
+            if password_form.is_valid():
+                password_form.save()
+                update_session_auth_hash(self.request, password_form.user)
+                return redirect(self.success_url)
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileUpdateView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            context['password_form'] = CustomPasswordChangeForm(self.request.user, self.request.POST)
+        else:
+            context['password_form'] = CustomPasswordChangeForm(self.request.user)
+        return context
+
+class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    form_class = CustomPasswordChangeForm
+    template_name = 'Profiles/password_change.html'
+    success_url = reverse_lazy('profile_update')
+
+    def form_valid(self, form):
+        form.save()
+        update_session_auth_hash(self.request, form.user)
+        return redirect(self.success_url)
+    
+class UserDeleteView(LoginRequiredMixin, DeleteView):
+    model = User
+    template_name = 'Profiles/account_confirm_delete.html'
+    success_url = reverse_lazy('account_deleted')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        logout(request)
+        user.delete()
+        return redirect(self.success_url)
