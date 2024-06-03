@@ -239,7 +239,7 @@ class EventUpdateView(CultureGroupRequiredMixin, UpdateView):
 class EventDeleteView(CultureGroupRequiredMixin, DeleteView):
     model = Event
     success_url = reverse_lazy('list_events')
-    template_name = 'Activities/event_detail.html'
+    template_name = 'Activities/Events/event_detail.html'
 # * ______________  EVENTS:: "Culture"  _______________________________
 
 

@@ -10,6 +10,12 @@ from Profiles.models import Profile
 import pytz
 from decimal import Decimal
 
+from django.test import TestCase, Client
+from django.urls import reverse
+from django.utils import timezone
+from django.contrib.auth.models import User, Group
+from .models import Event, Booking
+
 
 class EventModelTest(TestCase):
 
@@ -169,3 +175,112 @@ class EventModelTest(TestCase):
 
         self.assertIn('You already have a booking for another event during this time.', str(
             context.exception))
+
+class EventViewTests(TestCase):
+    def setUp(self):
+        # Creazione di un utente e assegnazione al gruppo 'culture'
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.user_group = Group.objects.create(name='culture')
+        self.user.groups.add(self.user_group)
+        
+        # Login dell'utente
+        self.client = Client()
+        self.client.login(username='testuser', password='12345')
+        
+        # Creazione di un evento di test
+        self.event = Event.objects.create(
+            name='Test Event',
+            description='Event description',
+            date=timezone.now() + timezone.timedelta(days=1),
+            duration=timezone.timedelta(hours=2),
+            price=0,
+            max_capacity=50,
+            place='Test Place',
+            status=Event.ACTIVE
+        )
+        
+    def test_event_list_view(self):
+        # Test della vista per la lista degli eventi
+        response = self.client.get(reverse('list_events'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'Activities/Events/events.html')
+        self.assertContains(response, 'Test Event')
+        
+        def test_event_detail_view(self):
+            # Test della vista per i dettagli di un evento
+            response = self.client.get(reverse('event_detail', kwargs={'pk': self.event.id}))
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, 'Activities/Events/event_detail.html')
+            self.assertContains(response, 'Test Event')
+            self.assertContains(response, 'Event description')
+
+    def test_event_create_view(self):
+        # Test della vista per la creazione di un evento
+        response = self.client.get(reverse('new_event'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'Activities/master_activity.html')
+
+        response = self.client.post(reverse('new_event'), {
+            'name': 'New Event',
+            'description': 'New Event description',
+            'date': timezone.now() + timezone.timedelta(days=2),
+            'duration': timezone.timedelta(hours=1),
+            'price': 10.00,
+            'max_capacity': 100,
+            'place': 'New Place',
+            'status': Event.ACTIVE
+        })
+        self.assertEqual(response.status_code, 302)  # Redirection after successful post
+        self.assertTrue(Event.objects.filter(name='New Event').exists())
+    
+    def test_event_update_view(self):
+        # Test della vista per l'aggiornamento di un evento
+        response = self.client.get(reverse('event_update', kwargs={'pk': self.event.id}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'Activities/master_activity.html')
+
+        response = self.client.post(reverse('event_update', kwargs={'pk': self.event.id}), {
+            'name': 'Updated Event',
+            'description': 'Updated description',
+            'date': self.event.date,
+            'duration': self.event.duration,
+            'price': self.event.price,
+            'max_capacity': self.event.max_capacity,
+            'place': self.event.place,
+            'status': self.event.status
+        })
+        self.assertEqual(response.status_code, 302)
+        self.event.refresh_from_db()
+        self.assertEqual(self.event.name, 'Updated Event')
+        self.assertEqual(self.event.description, 'Updated description')
+
+    def test_event_delete_view(self):
+
+        response = self.client.get(reverse('event_delete', kwargs={'pk': self.event.id}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'Activities/Events/event_detail.html')
+
+        response = self.client.post(reverse('event_delete', kwargs={'pk': self.event.id}), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Event.objects.filter(id=self.event.id).exists())
+        
+    def test_event_booking_view(self):
+        # Test della vista per la prenotazione di un evento
+        response = self.client.get(reverse('event_newbooking', kwargs={'event_id': self.event.id}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'Activities/master_activity.html')
+
+        response = self.client.post(reverse('event_newbooking', kwargs={'event_id': self.event.id}), {
+            'event': self.event.id,  # Aggiungi l'evento al form
+            'num_seats': 2
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Booking.objects.filter(event=self.event, user=self.user).exists())
+
+    def test_event_booking_list_view(self):
+        # Test della vista per la lista delle prenotazioni dell'utente
+        Booking.objects.create(event=self.event, user=self.user, num_seats=2)
+        response = self.client.get(reverse('user_event_booking_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'Activities/Events/event_bookings.html')
+        self.assertContains(response, 'Test Event')
