@@ -8,14 +8,11 @@ from datetime import timedelta
 from decimal import Decimal
 import os
 
-
 def course_image_path(instance, filename):
     return f"Courses/{instance.id}/{filename}"
 
-
 def default_event_time():
     return (timezone.localtime(timezone.now()) + timedelta(hours=1)).replace(second=0, microsecond=0)
-
 
 class Event(models.Model):
     ACTIVE = 'active'
@@ -96,7 +93,6 @@ class Event(models.Model):
     class Meta:
         ordering = ['date']
 
-
 class Booking(models.Model):
     event = models.ForeignKey(
         Event, on_delete=models.CASCADE, related_name='bookings')
@@ -150,8 +146,7 @@ class Course(models.Model):
     end_date = models.DateField()
     recurrence_day = models.CharField(max_length=20)
     time = models.TimeField()
-    image = models.ImageField(
-        upload_to=course_image_path, default='Courses/default.jpg')
+    image = models.ImageField(default='default_course.jpeg')
     category = models.CharField(
         max_length=50, choices=CATEGORY_CHOICES, default='ANY')
 
@@ -162,11 +157,7 @@ class Course(models.Model):
             super().save(*args, **kwargs)
             self.image = temp_image
 
-        if self.image and 'Courses/default.jpg' not in self.image.path:
-            course_folder = os.path.join('Courses', str(self.id))
-            if not os.path.exists(course_folder):
-                os.makedirs(course_folder)
-
+        if self.image and 'default_course.jpeg' not in self.image.path:
             self.image.name = course_image_path(self, self.image.name)
 
         super().save(*args, **kwargs)

@@ -36,6 +36,6 @@ urlpatterns = [
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# delete_db ()
+delete_db ()
 # init_db ()
 # test_eventsbooking()
