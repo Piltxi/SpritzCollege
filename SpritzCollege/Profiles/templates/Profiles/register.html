@@ -38,6 +38,11 @@
         object-fit: cover;
         margin-left: 20px;
     }
+
+    .bottom-text {
+        text-align: center;
+        margin-top: 20px;
+    }
 </style>
 
 <div class="content">
@@ -45,8 +50,6 @@
 
     <div class="container">
         <div class="center">
-            
-    
             <form method="post" autocomplete="off">
                 <div class="col-md-6 offset-md-3">
                     {% csrf_token %}
@@ -54,14 +57,17 @@
                     <div class="col-md-6 offset-md-3">
                         <button type="submit">Register</button>
                     </div>
+                </div>
             </form>
         </div>
-        </div>
-
 
         <div>
             <img src="{% static 'login.jpeg' %}" alt="">
         </div>
+    </div>
+
+    <div class="bottom-text">
+        <p>Hey you! Do you already have an account on our beautiful orange platform? <a href="{% url 'login' %}">Click here.</a></p>
     </div>
 </div>
 {% endblock %}

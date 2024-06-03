@@ -87,7 +87,6 @@
   <title>{% block title %}{% endblock %}</title>
   <link rel="icon" type="image/x-icon" href="{% static 'icon_spritz.png' %}">
   <style>
-
     body {
       margin-bottom: 100px;
       background-color: white;
@@ -115,7 +114,7 @@
     }
 
     .bottom-bar {
-      position: fixed; 
+      position: fixed;
       bottom: 0;
       width: 100%;
       display: flex;
@@ -176,18 +175,20 @@
       </ul>
 
       {% if user.is_authenticated %}
-
-
       <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
         <button type="submit">Logout: {{user.username}}</button>
       </form>
       {% else %}
 
-      <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <button type="submit">Sign in</button>
-      </form>
+      <a style="padding-right: 10px; font-style: italic;" href="{% url 'register' %}">submit</a>
+
+
+        <form method="post" action="{% url 'login' %}">
+          {% csrf_token %}
+          <button type="submit">Sign in</button>
+        </form>
+
       {% endif %}
 
 
