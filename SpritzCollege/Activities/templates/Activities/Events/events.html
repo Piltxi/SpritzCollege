@@ -105,12 +105,8 @@
                 <button type="button" onclick="resetForm()" class="btn btn-info"><i class="fas fa-sync"></i> Show all
                     events</button>
                 <br>
-                {% if request.user.is_authenticated %}
-                {% for group in request.user.groups.all %}
-                {% if group.name == 'culture' %}
+                {% if request.user|has_group:"culture" %}
                 <a href="{% url 'new_event' %}" class="btn btn-warning">New event</a>
-                {% endif %}
-                {% endfor %}
                 {% endif %}
                 <br>
             </form>

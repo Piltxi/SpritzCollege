@@ -9,7 +9,7 @@ import pytz
 
 from Activities.models import Event, Course
 
-def test_eventsbooking (): 
+def db_test_events_booking (): 
     timezone = pytz.timezone('Europe/Rome')
     ev1 = Event.objects.create(
             name="Event Test 1",
@@ -27,12 +27,15 @@ def test_eventsbooking ():
             place="cinema"
         )
 
-def create_user_groups ():
-    # directors, administration, culture, students, visitors, maintainers
-    group_names = ['directors', 'administration', 'culture', 'students', 'visitors', 'maintainers']
+    print ("-> load events for booking test")
+
+def db_create_groups ():
+    group_names = ['administration', 'culture', 'visitors']
 
     for name in group_names:
         Group.objects.get_or_create(name=name)
+    
+    print ("-> create users groups")
 
 def load_courses_from_json (file_path):
     with open(file_path, 'r') as file:
@@ -50,7 +53,7 @@ def load_courses_from_json (file_path):
             )
             course.save()
 
-def delete_db (): 
+def db_delete (): 
     Event.objects.all().delete()
     Course.objects.all().delete()
     print ("-> data off")
@@ -69,13 +72,6 @@ def load_events_from_json(file_path):
             )
             event.save()
 
-def init_db(): 
-    
-    create_user_groups()
-
-    json_file_path = '../data/events_SpritzCollege.json'
-    load_events_from_json(json_file_path)
-
-    json_file_path = '../data/courses_SpritzCollege.json'
-    load_courses_from_json(json_file_path)
+def _start_SpritzCollege (): 
+    db_create_groups()
 

@@ -46,16 +46,6 @@
 <div class="container">
     <h1 class="text-center">{{ title }} - SpritzCollege</h1>
 
-    <!-- {% if request.user.is_authenticated %}
-        <div class="text-center">
-            {% for group in request.user.groups.all %}
-                {% if group.name == 'culture' %}
-                    <a href="{% url 'new_course' %}" class="btn-custom">Add course</a>
-                {% endif %}
-            {% endfor %}
-        </div>
-    {% endif %} -->
-
     {% if object_list %}
         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="color: black;">
             <ol class="carousel-indicators">

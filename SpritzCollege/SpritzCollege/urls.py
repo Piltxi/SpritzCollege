@@ -16,11 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path, include
+
 from .views import CustomLoginView, go_home, aboutAs_view
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
-from SpritzCollege.data_operations import delete_db, test_eventsbooking
+
+from SpritzCollege.data_operations import _start_SpritzCollege, db_delete
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     
@@ -36,6 +39,5 @@ urlpatterns = [
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-delete_db ()
-# init_db ()
-# test_eventsbooking()
+_start_SpritzCollege ()
+# db_delete()

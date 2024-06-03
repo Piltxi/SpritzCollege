@@ -31,8 +31,8 @@ from .forms import BookingForm, EventForm, SearchForm, CourseForm, SubscriptionF
 class CultureGroupRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         user = self.request.user
-        return user.is_superuser or user.groups.filter(name='culture').exists()
-
+        
+        return user.is_superuser or user.groups.filter(name='administration').exists() or user.groups.filter(name='culture').exists()
 
 def str_criteriasearch(search_string, search_where, status, start_date, end_date):
     out = "Searching for "
@@ -78,10 +78,10 @@ class EventsList(ListView):
         start_date = self.request.GET.get("start_date", "")
         end_date = self.request.GET.get("end_date", "")
 
-        print("Parametri di ricerca: \n")
+        ''' print("Parametri di ricerca: \n")
         print(f"stringa: {search_string}")
         print(f"dove: {search_where}")
-        print(f"stato: {status}")
+        print(f"stato: {status}")'''
 
         search_performed = False
 
@@ -198,8 +198,8 @@ def calendar_view(request, events, courses, title):
 
 
 # * ______________  EVENTS:: "Culture"  _______________________________
-class AddEvents(GroupRequiredMixin, CreateView):
-    group_required = ["culture"]
+class AddEvents(CultureGroupRequiredMixin, CreateView):
+    # group_required = ["culture"]
     form_class = EventForm
     template_name = "Activities/master_activity.html"
     success_url = reverse_lazy("list_events")
@@ -244,8 +244,7 @@ class EventDeleteView(CultureGroupRequiredMixin, DeleteView):
 
 
 # * ______________  COURSE:: "Culture"  _______________________________
-class AddCourse (GroupRequiredMixin, CreateView):
-    group_required = ["culture"]
+class AddCourse (CultureGroupRequiredMixin, CreateView):
     form_class = CourseForm
     template_name = "Activities/master_activity.html"
     success_url = reverse_lazy("list_courses")
@@ -265,9 +264,7 @@ class CourseDetail(DetailView):
         context = super().get_context_data(**kwargs)
         return context
 
-
-class CourseUpdateView(GroupRequiredMixin, UpdateView):
-    group_required = ["culture"]
+class CourseUpdateView(CultureGroupRequiredMixin, UpdateView):
     model = Course
     form_class = CourseForm
     template_name = 'Activities/master_activity.html'
@@ -279,8 +276,7 @@ class CourseUpdateView(GroupRequiredMixin, UpdateView):
         return context
 
 
-class CourseDeleteView(GroupRequiredMixin, DeleteView):
-    group_required = ["culture"]
+class CourseDeleteView(CultureGroupRequiredMixin, DeleteView):
     model = Course
     success_url = reverse_lazy('list_courses')
     template_name = 'Activities/course_detail.html'
@@ -387,9 +383,7 @@ def generate_booking_pdf(request, booking_id):
 def calendar_user_view (request): 
     events = Event.objects.filter(bookings__user=request.user)
     courses = Course.objects.filter(subscribers__user=request.user)
-    
     title = f"{request.user}'s calendar"
-    
     return calendar_view(request, events, courses, title)
 
 class UserBookingListView(LoginRequiredMixin, ListView):
@@ -410,7 +404,7 @@ class UserBookingListView(LoginRequiredMixin, ListView):
         return context
 
 
-class UserBookingDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class UserBookingDeleteView (LoginRequiredMixin, DeleteView):
     model = Booking
     template_name = 'Activities/Events/event_bookings.html'
     success_url = reverse_lazy('user_event_booking_list')
@@ -429,7 +423,7 @@ class UserBookingDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
 
 
 # * ______________ ADMIN VIEWS  ______________________________________________
-class AdminEventBookingsView(LoginRequiredMixin, CultureGroupRequiredMixin, DetailView):
+class AdminEventBookingsView(CultureGroupRequiredMixin, DetailView):
     model = Event
     template_name = 'Activities/Events/event_bookings.html'
     context_object_name = 'evento'
@@ -466,7 +460,7 @@ class BookingUpdateMixin:
 
     def get_queryset(self):
         event_id = self.kwargs.get('event_id')
-        if self.request.user.is_superuser or self.request.user.groups.filter(name='culture').exists():
+        if self.request.user.is_superuser or self.request.user.groups.filter(name='administration').exists() or self.request.user.groups.filter(name='culture').exists():
             if event_id:
                 return Booking.objects.filter(event__id=event_id)
             return Booking.objects.all()

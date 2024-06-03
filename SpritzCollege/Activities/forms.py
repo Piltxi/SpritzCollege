@@ -40,10 +40,11 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['name', 'description', 'date',
-                  'price', 'max_capacity', 'place']
+                  'price', 'max_capacity', 'place', 'duration']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4, 'cols': 60}),
             'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'duration': forms.TextInput(attrs={'type': 'time'}),
         }
 
 

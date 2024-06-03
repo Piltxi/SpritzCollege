@@ -26,7 +26,15 @@ from .models import Profile
 
 def group_required(group_name):
     def in_group(user):
+        
+        if user.is_superuser:
+            return True
+        
+        if user.groups.filter(name="administration").exists():
+            return True
+        
         return user.is_authenticated and user.groups.filter(name=group_name).exists()
+    
     return user_passes_test(in_group)
 
 def register(request):
@@ -152,7 +160,9 @@ class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     def form_valid(self, form):
         form.save()
         update_session_auth_hash(self.request, form.user)
-        return redirect(self.success_url)
+        messages.info(self.request, f'Your password has been updated successfully, {self.request.user.username}! Only one thing: login once again.')
+        logout(self.request)
+        return redirect('login')
     
 class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
