@@ -1,2 +1,6 @@
 **/.DS_Store
 /trash/*
+/media/Courses/*
+/SpritzCollege/Activities/migrations/*
+/SpritzCollege/Profiles/migrations/*
+/SpritzCollege/db.sqlite3
