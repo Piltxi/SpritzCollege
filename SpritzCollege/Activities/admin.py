@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Event, Course, Booking
+from .models import Event, Course, Booking, Subscription
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load filter %}
 
 {% block title %}{{ object.name }} - event{% endblock %}
 
@@ -136,12 +137,19 @@
     <p><strong>Max Capacity / Available Seats : </strong> {{ object.max_capacity }} / {{ object.available_seats }}</p>
     <p><strong>Place:</strong> {{ object.place }}</p>
 
+
+    {% if not request.user.is_authenticated %}
+    <br>
+    Do you want to stay up to date with all the news about our new <a style="color: orange; text-decoration: double;">orange</a> platform? <a href="{% url 'register' %}">Submit here!</a>
+    <br>
+    {% endif %}
+
     {% if request.user.is_authenticated %}
     <div class="col text-center" style="margin-bottom: 10px;">
         <a class="btn btn-primary" href="{% url 'event_newbooking' event.id %}">Book event</a>
     </div>
-    {% for group in request.user.groups.all %}
-    {% if group.name == 'culture' %}
+
+    {% if request.user|has_group:"culture" %}
 
     <div class="col text-center" style="margin-bottom: 10px;">
         <a class="btn btn-warning" href="{% url 'event_update' event.id %}">Update Event</a>
@@ -150,9 +158,10 @@
             href="{% url 'bookings_view' evento_id=object.id %}">View Bookings</a>
         <button class="btn btn-danger" onclick="openModal()">Delete Event</button>
     </div>
+
     {% endif %}
-    {% endfor %}
     {% endif %}
+
 
 
 </div>

@@ -9,6 +9,10 @@ from decimal import Decimal
 import os
 
 
+def course_image_path(instance, filename):
+    return f"Courses/{instance.id}/{filename}"
+
+
 def default_event_time():
     return (timezone.localtime(timezone.now()) + timedelta(hours=1)).replace(second=0, microsecond=0)
 
@@ -60,7 +64,8 @@ class Event(models.Model):
         end_time = self.date + self.duration
 
         events_with_end_time = Event.objects.annotate(
-            end_time=ExpressionWrapper(F('date') + F('duration') + timedelta(minutes=10), output_field=models.DateTimeField())
+            end_time=ExpressionWrapper(
+                F('date') + F('duration') + timedelta(minutes=10), output_field=models.DateTimeField())
         )
 
         overlapping_events = events_with_end_time.filter(
@@ -71,7 +76,8 @@ class Event(models.Model):
         ).exclude(id=self.id)
 
         if overlapping_events.exists():
-            raise ValidationError('Another event is scheduled in the same place at the same time!')
+            raise ValidationError(
+                'Another event is scheduled in the same place at the same time!')
 
         if self.price < 0:
             raise ValidationError('The price must be zero or higher!')
@@ -116,15 +122,6 @@ class Booking(models.Model):
         if self.num_seats > self.event.max_capacity - total_booked_seats:
             raise ValidationError('There are not enough seats available!')
 
-        '''overlapping_bookings = Booking.objects.filter(
-            user=self.request.user,
-            event__date__lt=event_end_time,
-            event__date__gte=self.event.date
-        ).exclude(event=self.event)
-
-        if overlapping_bookings.exists():
-            raise ValidationError('You already have a booking for another event during this time.')'''
-
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
@@ -135,10 +132,6 @@ class Booking(models.Model):
     class Meta:
         unique_together = ('event', 'user', 'booking_time')
         ordering = ['event', 'user']
-
-
-def course_image_path(instance, filename):
-    return f"Courses/{instance.id}/{filename}"
 
 
 class Course(models.Model):
@@ -187,7 +180,6 @@ class Subscription(models.Model):
         User, on_delete=models.CASCADE, related_name='course_subscriptions')
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, related_name='subscribers')
-    email = models.EmailField(max_length=254)
     subscription_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -81,10 +81,11 @@
         </div>
 
         <div class="groups-container">
-            <h3>current(s) of <i>{{ form.cleaned_data.user.username }}</i></h3>
+           
             {% if form.cleaned_data.user %}
             <ul>
                 {% if form.cleaned_data.user.groups.all.count > 0 %}
+                <h3>current(s) of <i>{{ form.cleaned_data.user.username }}</i></h3>
                 {% for group in form.cleaned_data.user.groups.all %}
                 <li>{{ group.name }}</li>
                 {% endfor %}

@@ -10,6 +10,7 @@ django-braces = "*"
 faker = "*"
 reportlab = "*"
 pytz = "*"
+openpyxl = "*"
 
 [dev-packages]
 

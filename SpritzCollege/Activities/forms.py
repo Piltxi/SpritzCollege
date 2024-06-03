@@ -105,7 +105,19 @@ class BookingForm(forms.ModelForm):
 class SubscriptionForm(forms.ModelForm):
     class Meta:
         model = Subscription
-        fields = ['course', 'email']
-        widgets = {
-            'email': forms.EmailInput(attrs={'style': 'width: 300px; height: 40px;'}),
-        }
+        fields = ['course']
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(SubscriptionForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        user = self.request.user if self.request else None
+        print(f"\n\nFORM: {user}\n\n\n")
+        course = cleaned_data.get('course')
+
+        if Subscription.objects.filter(user=user, course=course).exists():
+            raise forms.ValidationError(
+                "You are already subscribed to this course!")
+        return cleaned_data

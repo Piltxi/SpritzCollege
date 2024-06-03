@@ -125,20 +125,20 @@
                             <td>{{ item.start_date }}</td>
                             <td>{{ item.end_date }}</td>
                             <td>{{ item.recurrence_day }}</td>
-                            <td><a href="{% url 'course_pdf' item.id %}" class="btn btn-primary btn-sm">Brochure</a>
+                            <td><a href="{% url 'course_brochure_pdf' item.id %}" class="btn btn-primary">Brochure</a>
                             
                         
                                 {% if request.user.is_authenticated %}
-                               
-                                <a href="{% url 'new_subscription' item.id %}" class="btn btn-success btn-sm">Subscribe</a>
-                              
-                                {% for group in request.user.groups.all %}
-                                    {% if group.name == 'culture' %}
-                                    <a href="{% url 'course_subscriptions' item.id %}" class="btn btn-info btn-sm">Active Subscriptions</a>
-                                    {% endif %}
-                                    {% endfor %}
+                                <a href="{% url 'new_subscription' item.id %}" class="btn btn-success">Subscribe</a>
+                                {% endif %}
+                                
+                                {% if request.user|has_group:"culture" %}
+                                <a href="{% url 'course_subscriptions' item.id %}" class="btn btn-info">Active Subscriptions</a>
+                                <a href="#" class="btn btn-dark">Chat Room</a>
 
                                 {% endif %}
+
+                               
                             
                             </td>
                             

@@ -93,7 +93,7 @@
                 <td>{{ item.event.date }}</td>
                 <td>{{ item.num_seats }}</td>
                 <td>
-                    <a href="#" class="btn btn-primary btn-sm">Print PDF</a>
+                    <a href="{% url 'user_booking_pdf' item.id %}" class="btn btn-primary btn-sm">Download PDF</a>
                     <button class="btn btn-danger btn-sm"
                         onclick="openModal({{ item.id }}, '{{ item.event.name }}', '{{ view_type }}')">Delete</button>
 

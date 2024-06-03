@@ -1,23 +1,15 @@
-from django.http import JsonResponse
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
-from django.views import View
-from .forms import UserGroupForm, VisitorRegistrationForm, ProfileUpdateForm
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
-from django.views.generic import ListView, UpdateView, TemplateView
+from .forms import UserGroupForm, VisitorRegistrationForm, ProfileUpdateForm, GroupMembershipForm
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views.generic import ListView, UpdateView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Message, User
 
 from braces.views import GroupRequiredMixin
-
-from django.contrib import messages
-
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, redirect
-from .forms import GroupMembershipForm
 from .models import Profile
 
 def group_required(group_name):
@@ -102,11 +94,6 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy("profile")
-    
-@login_required
-def delete_user_messages(request):
-    Message.objects.filter(user=request.user).delete()
-    return redirect('messages_list')
 
 @group_required('administration')
 def manage_group_membership(request):
@@ -141,10 +128,12 @@ class MyPanelView(LoginRequiredMixin, TemplateView):
 @login_required
 def delete_all_messages(request):
     user = request.user
-
+    print ("\n\nciao ciao ciao\n\n")
+    
     if request.method == 'POST':
         Message.objects.filter(user=user).delete()
         messages.success(request, 'Successfully deleted all your notifications. Peace and Love!')
+     
         return redirect('my_messages')
     
     return render(request, 'Profiles/messages.html')

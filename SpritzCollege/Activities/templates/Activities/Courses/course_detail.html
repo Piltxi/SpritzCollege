@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load filter %}
 
 {% block title %}{{ object.name }} - course{% endblock %}
 
@@ -6,12 +7,13 @@
 <style>
     .custom-img {
         width: 100%;
-        max-width: 100%; /* Usa tutto lo spazio disponibile nella colonna */
+        max-width: 100%;
         height: auto;
-        border: 5px solid red; /* Per verificare visivamente che il CSS venga applicato */
+        border: 5px solid red;
     }
+
     .back-link {
-        margin-left: 70px; /* Modifica questo valore secondo le tue preferenze */
+        margin-left: 70px;
     }
 
     .modal {
@@ -74,24 +76,33 @@
     </div>
     <div class="row mt-4">
         <div class="col-md-12">
-            
-            <a href="{% url 'course_pdf' course.id %}" class="btn btn-primary">Brochure</a>
-            <a href="{% url 'new_subscription' course.id %}" class="btn btn-success">Subscribe</a>
-            <a href="{% url 'course_subscriptions' course.id %}" class="btn btn-success">Subscription</a>
-            <br><br>
+
+            <a href="{% url 'course_brochure_pdf' course.id %}" class="btn btn-primary">Brochure</a>
+
+            {% if not request.user.is_authenticated %}
+            <br>
+            Do you want to stay up to date with all the news about our new <a style="color: orange; text-decoration: double;">orange</a> platform? <a href="{% url 'register' %}">Submit here!</a>
+            <br>
+            {% endif %}
+
             {% if request.user.is_authenticated %}
-            {% for group in request.user.groups.all %}
-            {% if group.name == 'culture' %}
+            <a href="{% url 'new_subscription' course.id %}" class="btn btn-success">Subscribe</a>
+            {% endif %}
+
+           
+            <br><br>
+            {% if request.user|has_group:"culture" %}
+            <a href="{% url 'export_course_subscriptions_excel' course.id %}" class="btn btn-info">Export to
+                Excel</a>
             <a class="btn btn-warning" href="{% url 'course_update' course.id %}">Update Course</a>
             <button class="btn btn-danger" onclick="openModal()">Delete Course</button>
-            </div>
+            <br><br>
+            <a href="#" class="btn btn-dark">Chat Room</a>
             {% endif %}
-            {% endfor %}
-            {% endif %}
-        
+
         </div>
     </div>
-   
+
 </div>
 
 <script>

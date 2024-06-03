@@ -5,34 +5,39 @@
 
 {% block panel %}
 
-    <div class="right-pane">
-        <h2>My notifications</h2>
-        <a href="{% url 'delete_messages' %}">reset</a>
-        <div class="messages-container">
-            {% for message in object_list %}
-            <div class="message-box">
-                <div class="message-header">
-                    <h3>{{ message.title }}</h3>
-                    <span class="timestamp">{{ message.timestamp|date:"Y-m-d H:i" }}</span>
-                </div>
-                <p>{{ message.content }}</p>
+<div class="right-pane">
+    <h2>My notifications</h2>
+    <form action="{% url 'delete_messages' %}" method="POST" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit"
+            style="background: none; color: blue; border: none; padding: 0; text-decoration: underline; cursor: pointer; font-style: italic;">reset</button>
+    </form>
+
+    <div class="messages-container">
+        {% for message in object_list %}
+        <div class="message-box">
+            <div class="message-header">
+                <h3>{{ message.title }}</h3>
+                <span class="timestamp">{{ message.timestamp|date:"Y-m-d H:i" }}</span>
             </div>
-            {% empty %}
-            <p>No messages found.</p>
-            {% endfor %}
+            <p>{{ message.content }}</p>
         </div>
+        {% empty %}
+        <p>No messages found.</p>
+        {% endfor %}
     </div>
+</div>
 </div>
 
 <style>
     .messages-container {
-      display: flex;
+        display: flex;
         flex-direction: column;
         gap: 20px;
     }
 
     .message-box {
-       background-color: #ffeb3b;
+        background-color: #ffeb3b;
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
