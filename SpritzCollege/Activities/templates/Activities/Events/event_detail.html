@@ -149,6 +149,8 @@
         <a class="btn btn-primary" href="{% url 'event_newbooking' event.id %}">Book event</a>
     </div>
 
+    
+
     {% if request.user|has_group:"culture" %}
 
     <div class="col text-center" style="margin-bottom: 10px;">

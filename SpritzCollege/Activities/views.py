@@ -14,6 +14,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.db.models import Sum
 
 from datetime import timedelta
 from reportlab.lib.units import inch
@@ -691,3 +692,40 @@ class AdminUserSubscriptionDeleteView(CultureGroupRequiredMixin, DeleteView):
 
 
 # * SUBSCRIBE:: "Culture"  ______________________________________________
+
+class ExportActiveEventsToExcelView(CultureGroupRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        events = Event.get_active_events().annotate(num_bookings=Sum('bookings__num_seats'))
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Active Events"
+
+        headers = [
+            'Event Name', 'Description', 'Date', 'Duration', 'Price', 'Max Capacity',
+            'Place', 'Status', 'Number of Bookings', 'Available Seats'
+        ]
+        ws.append(headers)
+
+        for event in events:
+            ws.append([
+                event.name,
+                event.description,
+                event.date.strftime('%Y-%m-%d %H:%M'),
+                str(event.duration),
+                str(event.price),
+                event.max_capacity,
+                event.place,
+                event.status,
+                event.num_bookings or 0,
+                event.available_seats
+            ])
+
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename=active_events.xlsx'
+        wb.save(response)
+
+        return response

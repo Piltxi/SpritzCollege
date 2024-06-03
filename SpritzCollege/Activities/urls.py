@@ -31,6 +31,7 @@ urlpatterns = [
     path("events/new/", AddEvents.as_view(),name="new_event"),
     path('events/update/<int:pk>/', EventUpdateView.as_view(), name='event_update'),
     path('events/delete/<int:pk>/', EventDeleteView.as_view(), name='event_delete'),
+    path('export/active-events/', ExportActiveEventsToExcelView.as_view(), name='export_active_events_to_excel'),
     
     #* COURSES
     path('courses/detail/<int:pk>/', CourseDetail.as_view(), name='course_detail'),
@@ -46,7 +47,6 @@ urlpatterns = [
     path('events/my-bookings/update/<int:pk>/', UserBookingUpdateView.as_view(), name='user_event_booking_update'),
     path('events/my-bookings/delete/<int:pk>/', UserBookingDeleteView.as_view(), name='user_event_booking_delete'),
     path('activities/booking/<int:booking_id>/pdf/', generate_booking_pdf, name='user_booking_pdf'),
-    
     
     path('my-calendar/', calendar_user_view, name='user_calendar'),
     
