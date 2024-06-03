@@ -1,8 +1,20 @@
 <!-- profile_update.html -->
 {% extends "base-panel.html" %}
 
+{% block title %} My Profile - SpritzCollege {% endblock %}
+
 {% block panel %}
+ 
+
   <div class="custom-container mt-4">
+
+    {% if user.profile.profile_pic %}
+    <div class="text-center mb-4">
+      <img src="{{ user.profile.profile_pic.url }}" class="rounded-circle profile-pic" alt="Profile Picture" width="150" height="150">
+    </div>
+    {% endif %}
+
+
     <div class="custom-card mb-4">
       <div class="custom-card-header">
         <h2>Update Profile</h2>
@@ -46,6 +58,10 @@
     </div>
   </div>
 
+  <div id="lightboxModal" class="lightbox-modal">
+    <span class="lightbox-close">&times;</span>
+    <img class="lightbox-content" id="lightboxImage">
+  </div>
 
 <style>
 
@@ -77,5 +93,62 @@
   margin-bottom: 1rem;
 }
 
+/* Lightbox styles */
+.lightbox-modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.9);
+}
+
+.lightbox-content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 </style>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('lightboxModal');
+    var modalImg = document.getElementById('lightboxImage');
+    var img = document.querySelector('.profile-pic');
+    var span = document.getElementsByClassName('lightbox-close')[0];
+  
+    img.onclick = function() {
+      modal.style.display = 'block';
+      modalImg.src = this.src;
+    }
+  
+    span.onclick = function() {
+      modal.style.display = 'none';
+    }
+  });
+  </script>
 {% endblock %}

@@ -35,12 +35,13 @@ def register(request):
         return redirect('home')
     
     if request.method == 'POST':
-        form = VisitorRegistrationForm(request.POST)
+        form = VisitorRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             visitors_group, created = Group.objects.get_or_create(name='visitors')
             user.groups.add(visitors_group)
-            login(request, user)    
+            login(request, user)
+            messages.success(request, "Welcome to the world's best orange platform!!")
             return redirect('home')
     else:
         form = VisitorRegistrationForm()

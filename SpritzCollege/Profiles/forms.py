@@ -22,21 +22,14 @@ class VisitorRegistrationForm(UserCreationForm):
     def clean_interests(self):
         return ','.join(self.cleaned_data['interests'])
 
-    def __init__(self, *args, **kwargs):
-        super(VisitorRegistrationForm, self).__init__(*args, **kwargs)
-        if self.instance and hasattr(self.instance, 'profile'):
-            profile = self.instance.profile
-            initial_interests = profile.interests
-            if initial_interests:
-                self.fields['interests'].initial = initial_interests.split(',')
-
     def save(self, commit=True):
         user = super().save(commit=commit)
         profile, created = Profile.objects.get_or_create(user=user)
         profile.bio = self.cleaned_data.get('bio', '')
         profile.location = self.cleaned_data.get('location', '')
         profile.birth_date = self.cleaned_data.get('birth_date', None)
-        profile.profile_pic = self.cleaned_data.get('profile_pic', None)
+        if self.cleaned_data.get('profile_pic'):
+            profile.profile_pic = self.cleaned_data.get('profile_pic')
         profile.interests = self.cleaned_data.get('interests', '')
         if commit:
             profile.save()

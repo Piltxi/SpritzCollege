@@ -50,7 +50,7 @@
 
     <div class="container">
         <div class="center">
-            <form method="post" autocomplete="off">
+            <form method="post" autocomplete="off" enctype="multipart/form-data">
                 <div class="col-md-6 offset-md-3">
                     {% csrf_token %}
                     {{ form.as_p }}
