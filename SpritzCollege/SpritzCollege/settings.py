@@ -33,6 +33,11 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'www.spritzcollege.org']
 # Application definition
 
 INSTALLED_APPS = [
+    
+    'daphne',
+    'Activities',
+    'Profiles',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,10 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
-    'crispy_bootstrap4',
-    
-    'Activities',
-    'Profiles',
+    'crispy_bootstrap4'
 ]
 
 MIDDLEWARE = [
@@ -75,6 +77,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'SpritzCollege.wsgi.application'
+ASGI_APPLICATION = 'SpritzCollege.asgi.application'
 
 
 # Database
@@ -145,3 +148,13 @@ LOGIN_REDIRECT_URL = "/home/"
 '''LOGIN_URL = "/login/?auth=notok"
 LOGIN_REDIRECT_URL = "/?login=ok"
 LOGOUT_REDIRECT_URL = '/?logout=ok'''
+
+# ASGI_APPLICATION = "mysite.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}

@@ -1,8 +1,10 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
+
+from Activities.models import Course
 from .forms import UserGroupForm, VisitorRegistrationForm, GroupMembershipForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import ListView, UpdateView, TemplateView, View, DeleteView
@@ -177,3 +179,11 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
         logout(request)
         user.delete()
         return redirect(self.success_url)
+    
+@login_required
+def course_chat(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    if request.user.course_subscriptions.filter(course=course).exists():
+        return render(request, 'Profiles/course_chat.html', {'course': course})
+    else:
+        return redirect('course_detail', pk=course_id)

@@ -14,4 +14,6 @@ urlpatterns = [
     path('profile/deleted/', TemplateView.as_view(template_name='Profiles/account_deleted.html'), name='account_deleted'),
     
     path('messages/da/', delete_all_messages, name='delete_messages'),
+    
+    path('course/<int:course_id>/chat/', course_chat, name='course_chat'),
 ]

@@ -105,7 +105,7 @@
                                 
                                 {% if request.user|has_group:"culture" %}
                                 <a href="{% url 'course_subscriptions' item.id %}" class="btn btn-info">Active Subscriptions</a>
-                                <a href="#" class="btn btn-dark">Chat Room</a>
+                                <a href="{% url 'course_chat' item.id %}" class="btn btn-dark">Chat Room</a>
                                 {% endif %}
                             </td>
                         </tr>

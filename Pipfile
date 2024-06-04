@@ -11,6 +11,8 @@ faker = "*"
 reportlab = "*"
 pytz = "*"
 openpyxl = "*"
+channels = "*"
+daphne = "*"
 
 [dev-packages]
 
