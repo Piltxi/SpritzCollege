@@ -10,6 +10,17 @@ The design combines traditional hotel management with advanced student tracking.
     <br> 
 </p>
 
+## :tropical_drink: Introduction <a name = "getting_started"></a>
+
+SpritzCollege contains two different apps: 
+1. Activities
+2. Profiles
+### Activities
+
+Activities contains features for managing events and courses; it is accessible by unregistered users, and by users with greater privileges: users of <i>culture</i> and <i>administration</i> group.
+
+### Profiles
+
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
@@ -67,6 +78,29 @@ Now you are ready! Run the following command to clone repo:
 
 ```
 git clone https://github.com/Piltxi/SpritzCollege
+```
+##  First step
+
+If you don't have a local db:
+
+``` bash
+cd SpritzCollege 
+```
+
+``` bash
+python3 manage.py createsuperuser
+```
+
+``` bash
+python3 manage.py makemigrations Profiles
+python3 manage.py makemigrations Activities
+python3 manage.py makemigrations
+python3 manage.py migrate
+```
+
+Now you are ready to start:
+``` bash
+python3 manage.py runserver
 ```
 
 ##  Active User
