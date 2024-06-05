@@ -1,45 +1,211 @@
-<!-- chat/templates/chat/course_chat.html -->
+{% extends 'base.html' %}
+{% load filter %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Chat</title>
-</head>
-<body>
-    <h1>Chat Room for {{ course.name }}</h1>
-    <div id="chat-log"></div>
-    <input id="chat-message-input" type="text" size="100">
-    <input id="chat-message-submit" type="button" value="Send">
+{% block title %} {{ title }} {% endblock %}
 
-    <script>
-        const chatSocket = new WebSocket(
-            'ws://' + window.location.host + '/ws/chat/course/{{ course.id }}/');
+{% block content %}
+<style>
+    .back-link {
+        margin-left: 70px;
+    }
 
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').innerHTML += (data.username + ': ' + data.message + '<br>');
-        };
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+    }
 
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
+    .chat-layout {
+        display: flex;
+        width: 80%;
+        justify-content: space-between;
+    }
 
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // Enter key
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
+    .chat-box {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'username': '{{ request.user.username }}',
-                'message': message
-            }));
-            messageInputDom.value = '';
-        };
-    </script>
-</body>
-</html>
+    .chat-log {
+        width: 100%;
+        height: 400px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+        overflow-y: scroll;
+        background-color: #f9f9f9;
+    }
+
+    .chat-input {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .chat-input input[type="text"] {
+        width: 85%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .chat-input input[type="button"] {
+        width: 14%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .chat-input input[type="button"]:hover {
+        background-color: #0056b3;
+    }
+
+    .course-image {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .course-image img {
+        margin-left: 30px;
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    .reset-button-container {
+        margin-top: 20px;
+    }
+
+    .reset-button {
+        padding: 10px 20px;
+        background-color: red;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .reset-button:hover {
+        background-color: darkred;
+    }
+
+    .subscribed-users {
+        margin-top: 20px;
+        width: 80%;
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 10px;
+    }
+
+    .subscribed-users h2 {
+        margin-top: 0;
+    }
+
+    .subscribed-users ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .subscribed-users li {
+        padding: 5px 0;
+    }
+
+    .subscribed-users a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .subscribed-users a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<a class="back-link" href="{% url 'subscription_list' %}">/My Sub/</a>
+<a class="back-link" href="{% url 'list_courses' %}">/Course List/</a>
+
+
+<div class="chat-container">
+    <h1>Chat Room for <a style="font-style: italic; color: red;">{{ course.name }}</a></h1>
+    <div class="chat-layout">
+        <div class="chat-box">
+            <div id="chat-log" class="chat-log"></div>
+            <div class="chat-input">
+                <input id="chat-message-input" type="text" size="100">
+                <input id="chat-message-submit" type="button" value="Send">
+                <div class="reset-button-container">
+
+
+
+                </div>
+                <form method="post" action="{% url 'reset_course_chat' course.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="reset-button">Reset Chat</button>
+                </form>
+            </div>
+        </div>
+        <div class="course-image">
+            <img src="{{ course.image.url }}" alt="{{ course.name }}">
+        </div>
+
+    </div>
+    <div class="subscribed-users">
+        <h2>Users Enrolled in This Course</h2>
+        <ul>
+            {% for user in subscribed_users %}
+            <li>
+                <a href="{% url 'direct_chat' user.username %}">{{ user.username }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/course/{{ course.id }}/');
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        document.querySelector('#chat-log').innerHTML += (data.username + ': ' + data.message + '<br>');
+        document.querySelector('#chat-log').scrollTop = document.querySelector('#chat-log').scrollHeight;  // Scroll to bottom
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function (e) {
+        if (e.keyCode === 13) {  // Enter key
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+
+        if (message === "") {
+            // alert("Message cannot be empty!");
+            return;
+        }
+
+        chatSocket.send(JSON.stringify({
+            'username': '{{ request.user.username }}',
+            'message': message
+        }));
+        messageInputDom.value = '';
+    };
+</script>
+{% endblock %}

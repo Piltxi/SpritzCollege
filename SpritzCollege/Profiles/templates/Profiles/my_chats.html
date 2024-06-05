@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Personal Chats{% endblock %}
+
+{% block content %}
+    <style>
+        .chat-partners-container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-partners-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .chat-partners-header h2 {
+            margin: 0;
+            font-size: 2em;
+            color: #333;
+        }
+
+        .chat-partners-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .chat-partners-card {
+            flex: 0 1 calc(25% - 20px);
+            margin: 10px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chat-partners-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-partners-avatar {
+            margin-bottom: 10px;
+        }
+
+        .chat-partners-avatar img {
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border: 2px solid #007bff;
+        }
+
+        .chat-partners-avatar .default-avatar {
+            font-size: 80px;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 50%;
+            padding: 5px;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-partners-name {
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .chat-partners-name a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s ease;
+        }
+
+        .chat-partners-name a:hover {
+            color: #007bff;
+        }
+
+        .chat-partners-last-message {
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        .chat-partners-time {
+            color: #999;
+            font-size: 0.8em;
+        }
+    </style>
+
+    <div class="chat-partners-container">
+        <div class="chat-partners-header">
+            <h2>Your Personal Chats</h2>
+        </div>
+        <ul class="chat-partners-list">
+            {% for partner in chat_partners %}
+                <li class="chat-partners-card">
+                    <div class="chat-partners-avatar">
+                        {% if partner.profile.profile_pic %}
+                            <img src="{{ partner.profile.profile_pic.url }}" alt="{{ partner.username }}">
+                        {% else %}
+                            <div class="default-avatar">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="chat-partners-name">
+                        <a href="{% url 'direct_chat' partner.username %}">{{ partner.username }}</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

@@ -101,11 +101,12 @@
                             
                                 {% if request.user.is_authenticated %}
                                 <a href="{% url 'new_subscription' item.id %}" class="btn btn-success">Subscribe</a>
+                                <a href="{% url 'course_chat' item.id %}" class="btn btn-dark">Chat Room</a>
                                 {% endif %}
                                 
                                 {% if request.user|has_group:"culture" %}
                                 <a href="{% url 'course_subscriptions' item.id %}" class="btn btn-info">Active Subscriptions</a>
-                                <a href="{% url 'course_chat' item.id %}" class="btn btn-dark">Chat Room</a>
+                                
                                 {% endif %}
                             </td>
                         </tr>

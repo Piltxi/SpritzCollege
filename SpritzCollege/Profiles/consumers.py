@@ -13,7 +13,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.user = self.scope["user"]
         self.room_group_name = "chat_%s" % self.course_id
 
-        if await self.is_user_subscribed(self.user, self.course_id):
+        if await self.can_access_chat(self.user, self.course_id):
             # Join room group
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
@@ -73,7 +73,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         MessageInChat.objects.create(author=user, content=message, course_id=self.course_id)
 
     @database_sync_to_async
-    def is_user_subscribed(self, user, course_id):
+    def can_access_chat(self, user, course_id):
+        # Check if the user is subscribed to the course or belongs to the 'culture' group
+        if user.groups.filter(name="culture").exists():
+            return True
+        
+        if user.groups.filter(name="administration").exists():
+            return True
+        
         return Subscription.objects.filter(user=user, course_id=course_id).exists()
 
     def get_current_timestamp(self):

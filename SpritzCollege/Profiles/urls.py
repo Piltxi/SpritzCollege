@@ -16,4 +16,8 @@ urlpatterns = [
     path('messages/da/', delete_all_messages, name='delete_messages'),
     
     path('course/<int:course_id>/chat/', course_chat, name='course_chat'),
+    path('reset_course_chat/<int:course_id>/', reset_course_chat, name='reset_course_chat'),
+    
+    path('chat/<str:username>/', direct_chat, name='direct_chat'),
+    path('personal_chats/', my_chats, name='personal_chats'),
 ]

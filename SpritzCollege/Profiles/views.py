@@ -9,7 +9,7 @@ from .forms import UserGroupForm, VisitorRegistrationForm, GroupMembershipForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import ListView, UpdateView, TemplateView, View, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Message, User
+from .models import Message, MessageInChat, User, DirectMessage
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -183,7 +183,56 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
 @login_required
 def course_chat(request, course_id):
     course = get_object_or_404(Course, id=course_id)
-    if request.user.course_subscriptions.filter(course=course).exists():
-        return render(request, 'Profiles/course_chat.html', {'course': course})
+    user = request.user
+
+    if user.course_subscriptions.filter(course=course).exists() or user.groups.filter(name="culture").exists() or user.groups.filter(name="administration").exists():
+        subscribed_users = User.objects.filter(course_subscriptions__course=course)
+        return render(request, 'Profiles/course_chat.html', {'course': course, 'title': f"Chat - {course.name}", 'subscribed_users': subscribed_users})
     else:
+        messages.success(request, 'You cannot enter this chat because you are not enrolled in the course! get away from the best orange platform in the world!!')
         return redirect('course_detail', pk=course_id)
+    
+@group_required("culture")
+def reset_course_chat(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    
+    try:
+        MessageInChat.objects.filter(course=course).delete()
+        messages.success(request, 'You have officially deleted all course messages. I hope you did one thing right!')
+    except Exception as e:
+        messages.success(request, 'You do not have permission to reset the chat for this course. get away from the best orange platform in the world!!')
+        
+    return redirect('course_chat', course_id=course_id)
+
+@login_required
+def direct_chat(request, username):
+    recipient = get_object_or_404(User, username=username)
+    messages = DirectMessage.objects.filter(
+        sender=request.user, recipient=recipient
+    ) | DirectMessage.objects.filter(
+        sender=recipient, recipient=request.user
+    )
+    messages = messages.order_by('timestamp')
+
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            DirectMessage.objects.create(sender=request.user, recipient=recipient, content=content)
+            return redirect('direct_chat', username=username)
+
+    return render(request, 'Profiles/chat.html', {'recipient': recipient, 'messages_list': messages})
+
+@login_required
+def my_chats(request):
+    user = request.user
+    sent_messages = DirectMessage.objects.filter(sender=user).values('recipient').distinct()
+    received_messages = DirectMessage.objects.filter(recipient=user).values('sender').distinct()
+
+    # Unire i destinatari e i mittenti unici
+    chat_partners_ids = set(
+        [msg['recipient'] for msg in sent_messages] +
+        [msg['sender'] for msg in received_messages]
+    )
+    chat_partners = User.objects.filter(id__in=chat_partners_ids)
+
+    return render(request, 'Profiles/my_chats.html', {'chat_partners': chat_partners})

@@ -89,7 +89,7 @@
     {% endif %}
 
     {% if view_type == 'admin' %}
-    <a href="#" class="btn btn-dark">Chat Room</a>
+    <a href="{% url 'course_chat' course.id %}" class="btn btn-dark">Chat Room</a>
     {% endif %}
 
     <div class="table-responsive">
@@ -115,7 +115,7 @@
                             onclick="openModal({{ subscription.id }}, '{{ subscription.course.name }}', '{{ view_type }}')">Delete</button>
 
                         {% if view_type == 'user' %}
-                        <a href="#" class="btn btn-dark">Chat Room</a>
+                        <a href="{% url 'course_chat' subscription.course.id %}" class="btn btn-dark">Chat Room</a>
                         {% endif %}
                         <!-- {% if view_type == 'user' %}
                         <td><button class="btn btn-danger">Delete</button>
