@@ -10,7 +10,7 @@ The design combines traditional hotel management with advanced student tracking.
     <br> 
 </p>
 
-## :tropical_drink: Introduction <a name = "getting_started"></a>
+## 🍹 Introduction <a name="getting_started"></a>
 
 SpritzCollege contains two different apps: 
 1. Activities
@@ -79,16 +79,13 @@ Now you are ready! Run the following command to clone repo:
 ```
 git clone https://github.com/Piltxi/SpritzCollege
 ```
-##  First step
+##  <p style="color:orange; display:inline;"> *SpritzCollege* </p> setup and first <p style="color:red; display:inline;"> *drinks* </p>
 
-If you don't have a local db:
+In the following lines you can find some commands necessary to set up the development environment for the web platform.
 
+After cloning the repo:
 ``` bash
 cd SpritzCollege 
-```
-
-``` bash
-python3 manage.py createsuperuser
 ```
 
 ``` bash
@@ -98,12 +95,31 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 ```
 
+``` bash
+python3 manage.py createsuperuser
+```
+
+After cloning the project, you can import some data into the database to start a demo session; to import them:
+``` bash
+python3 manage.py letmedream
+```
+
 Now you are ready to start:
 ``` bash
 python3 manage.py runserver
 ```
 
-##  Active User
+*SpritzCollege* users can communicate with each other via chat, based on WebSocket and django-channels. 
+To use it, docker must be installed. Then, using the following command, start the redis channel layer, as <a href="https://channels.readthedocs.io/en/stable/tutorial/part_2.html">described here</a>.
+``` bash
+docker run -p 6379:6379 -d redis:5
+```
+*Now you can make the most of the potential of the best orange platform in the world.*
+
+
+
+
+##  Active User 
 <center>
 
 | **Username** | **Password** | **Group**          |
