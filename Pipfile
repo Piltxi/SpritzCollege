@@ -13,6 +13,7 @@ pytz = "*"
 openpyxl = "*"
 channels = "*"
 daphne = "*"
+django-crispy-forms = "*"
 
 [dev-packages]
 
