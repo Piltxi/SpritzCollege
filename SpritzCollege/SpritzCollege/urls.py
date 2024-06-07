@@ -22,7 +22,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 
-from SpritzCollege.data_operations import _start_SpritzCollege, db_delete
+from SpritzCollege.data_operations import _start_SpritzCollege, db_delete, db_pialla
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -40,4 +40,5 @@ urlpatterns = [
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # _start_SpritzCollege ()
+# db_pialla()
 # db_delete()

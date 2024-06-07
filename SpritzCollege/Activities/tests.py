@@ -1,6 +1,5 @@
 from datetime import datetime
 from django.test import TestCase
-from django.utils import timezone
 from django.core.exceptions import ValidationError
 from .forms import BookingForm
 from .models import Event, Booking
@@ -178,16 +177,13 @@ class EventModelTest(TestCase):
 
 class EventViewTests(TestCase):
     def setUp(self):
-        # Creazione di un utente e assegnazione al gruppo 'culture'
         self.user = User.objects.create_user(username='testuser', password='12345')
         self.user_group = Group.objects.create(name='culture')
         self.user.groups.add(self.user_group)
         
-        # Login dell'utente
         self.client = Client()
         self.client.login(username='testuser', password='12345')
         
-        # Creazione di un evento di test
         self.event = Event.objects.create(
             name='Test Event',
             description='Event description',

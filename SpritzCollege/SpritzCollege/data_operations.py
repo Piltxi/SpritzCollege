@@ -1,4 +1,5 @@
 import random
+from django.apps import apps
 from faker import Faker
 from django.utils import timezone
 from decimal import Decimal
@@ -8,6 +9,18 @@ from django.contrib.auth.models import Group
 import pytz
 
 from Activities.models import Event, Course
+
+def db_pialla (): 
+    all_models = apps.get_models()
+    for model in all_models:
+            model_name = model.__name__
+            try:
+                model.objects.all().delete()
+                print(f'All data from {model_name} deleted')
+            except Exception as e:
+                print(f'Failed delete data from {model_name}')
+
+    print('All data has been successfully deleted')
 
 def db_test_events_booking (): 
     timezone = pytz.timezone('Europe/Rome')

@@ -115,7 +115,6 @@ class SubscriptionForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         user = self.request.user if self.request else None
-        print(f"\n\nFORM: {user}\n\n\n")
         course = cleaned_data.get('course')
 
         if Subscription.objects.filter(user=user, course=course).exists():
