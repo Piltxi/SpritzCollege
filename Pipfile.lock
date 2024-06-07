@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f04db31ac710760bc95c77a0399a5fe7100eed226e3e3a832991c353bafe9d47"
+            "sha256": "9143ae5b41a7f467e708a21147773b1e9e21e4414bcdc150d7ab983d54fe7264"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -128,6 +128,15 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==23.10.4"
+        },
+        "crispy-bootstrap4": {
+            "hashes": [
+                "sha256:208673bf6a25892a656971af7a00e18ba2f7f06cd4a0d667923bd6134e64d276",
+                "sha256:46cf98777a28621d240bf71eb36d4a26ff86e9e19be1cfd822645f4043d18c31"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==2024.1"
         },
         "cryptography": {
             "hashes": [
