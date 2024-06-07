@@ -12,14 +12,14 @@ The design combines traditional hotel management with advanced student tracking.
 
 ## 🍹 Introduction <a name="getting_started"></a>
 
-SpritzCollege contains two different apps: 
-1. Activities
-2. Profiles
-### Activities
+<p align="center">
+  <img src="img_readme/total.svg" />
+</p>
 
-Activities contains features for managing events and courses; it is accessible by unregistered users, and by users with greater privileges: users of <i>culture</i> and <i>administration</i> group.
 
-### Profiles
+- *Profiles App* This application handles user management, including registration, profile updates, and deletion. It inherits functionality from the Django framework for login and registration. Users can specify their interests during registration, which helps tailor their experience. The app also includes a notification system to alert users of new events and a chat system for real-time communication between users in the same course.
+
+- *Activities App* This application manages information about events and courses. Users can browse available events and courses, register, and book seats. The app supports CRUD operations for events and courses, and authorized users can manage these activities comprehensively, including viewing and exporting booking data.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
@@ -116,8 +116,10 @@ docker run -p 6379:6379 -d redis:5
 ```
 *Now you can make the most of the potential of the best orange platform in the world.*
 
-
-
+If you want to do the first tests to check: 
+``` bash
+python3 manage.py test Activities
+```
 
 ##  Active User 
 <center>

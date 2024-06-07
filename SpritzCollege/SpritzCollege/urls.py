@@ -39,5 +39,5 @@ urlpatterns = [
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-_start_SpritzCollege ()
+# _start_SpritzCollege ()
 # db_delete()

@@ -20,6 +20,8 @@ from datetime import timedelta
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
 import openpyxl
 from reportlab.pdfgen import canvas
 from braces.views import GroupRequiredMixin
@@ -28,11 +30,13 @@ from io import BytesIO
 from .models import Event, Course, Booking, Subscription
 from .forms import BookingForm, EventForm, SearchForm, CourseForm, SubscriptionForm
 
+
 class CultureGroupRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         user = self.request.user
-        
+
         return user.is_superuser or user.groups.filter(name='administration').exists() or user.groups.filter(name='culture').exists()
+
 
 def str_criteriasearch(search_string, search_where, status, start_date, end_date):
     out = "Searching for "
@@ -149,10 +153,12 @@ class CoursesList(ListView):
         context['title'] = "Courses"
         return context
 
-def calendar_spritzcollege_view (request): 
+
+def calendar_spritzcollege_view(request):
     events = Event.objects.all()
     courses = Course.objects.all()
     return calendar_view(request, events, courses, None)
+
 
 def generate_recurrence_dates(course):
     recurrence_dates = []
@@ -162,6 +168,7 @@ def generate_recurrence_dates(course):
             recurrence_dates.append(current_date)
         current_date += timedelta(days=1)
     return recurrence_dates
+
 
 def calendar_view(request, events, courses, title):
     calendar_data = []
@@ -185,14 +192,14 @@ def calendar_view(request, events, courses, title):
                 'description': course.description,
                 'type': 'course'
             })
-    
+
     context = {
         'calendar_data': calendar_data,
         'title': title if title else 'Calendar'
     }
-    
+
     context['calendar_data'] = calendar_data
-   
+
     return render(request, 'Activities/calendar.html', context)
 # * ______________  ACTIVITIES::PUBLIC  _______________________________
 
@@ -264,6 +271,7 @@ class CourseDetail(DetailView):
         context = super().get_context_data(**kwargs)
         return context
 
+
 class CourseUpdateView(CultureGroupRequiredMixin, UpdateView):
     model = Course
     form_class = CourseForm
@@ -327,51 +335,83 @@ def generate_booking_pdf(request, booking_id):
     response['Content-Disposition'] = f'attachment; filename="booking_{booking_id}.pdf"'
 
     buffer = BytesIO()
-    p = canvas.Canvas(buffer, pagesize=letter)
-    width, height = letter
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    elements = []
 
-    p.setFillColor(colors.whitesmoke)
-    p.rect(0, 0, width, height, fill=1)
-    p.setStrokeColor(colors.grey)
-    p.setLineWidth(3)
-    p.rect(30, 30, width - 60, height - 60)
+    # Adding a banner or title
+    
+    header = f"{booking_id} :: Booking Confirmation"
+    
+    elements.append(Paragraph(header, styles['Title']))
+    elements.append(Spacer(1, 12))
 
-    p.setFont("Helvetica-Bold", 24)
-    p.setFillColor(colors.darkblue)
-    p.drawCentredString(width / 2.0, height - 100, "Booking Confirmation")
+    # User Information Section
+    elements.append(Paragraph("User Information", styles['Heading2']))
+    user_info = [
+        ['Username:', booking.user.username],
+        ['Email:', booking.user.email],
+    ]
+    table = Table(user_info, colWidths=[2 * inch, 4 * inch])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (0, -1), colors.grey),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (0, -1), 12),
+        ('BOTTOMPADDING', (0, 0), (0, -1), 12),
+        ('BACKGROUND', (1, 0), (1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+    elements.append(table)
+    elements.append(Spacer(1, 12))
 
-    p.setFont("Helvetica-Bold", 14)
-    p.setFillColor(colors.black)
-    p.drawString(100, height - 150, "User Information")
-    p.setFont("Helvetica", 12)
-    p.drawString(100, height - 170, f"Username: {booking.user.username}")
-    p.drawString(100, height - 190, f"Email: {booking.user.email}")
+    # Event Information Section
+    elements.append(Paragraph("Event Information", styles['Heading2']))
+    event_info = [
+        ['Event:', booking.event.name],
+        ['Description:', Paragraph(booking.event.description, styles['Normal'])],
+        ['Date:', booking.event.date.strftime('%Y-%m-%d %H:%M')],
+        ['Place:', booking.event.place],
+        ['Status:', booking.event.status],
+    ]
+    table = Table(event_info, colWidths=[2 * inch, 4 * inch])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (0, -1), colors.orange),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.white),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (0, -1), 12),
+        ('BOTTOMPADDING', (0, 0), (0, -1), 12),
+        ('BACKGROUND', (1, 0), (1, -1), colors.green),
+        ('GRID', (0, 0), (-1, -1), 1, colors.greenyellow),
+    ]))
+    elements.append(table)
+    elements.append(Spacer(1, 12))
 
-    p.setFont("Helvetica-Bold", 14)
-    p.drawString(100, height - 230, "Event Information")
-    p.setFont("Helvetica", 12)
-    p.drawString(100, height - 250, f"Event: {booking.event.name}")
-    p.drawString(100, height - 270, f"Description: {booking.event.description}")
-    p.drawString(100, height - 290, f"Date: {booking.event.date.strftime('%Y-%m-%d %H:%M')}")
-    p.drawString(100, height - 310, f"Place: {booking.event.place}")
-    p.drawString(100, height - 330, f"Status: {booking.event.status}")
+    elements.append(Paragraph("Booking Information", styles['Heading2']))
+    booking_info = [
+        ['Seats Booked:', booking.num_seats],
+        ['Booking Date:', booking.booking_time.strftime('%Y-%m-%d %H:%M')],
+    ]
+    table = Table(booking_info, colWidths=[2 * inch, 4 * inch])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (0, -1), colors.orange),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.white),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (0, -1), 12),
+        ('BOTTOMPADDING', (0, 0), (0, -1), 12),
+        ('BACKGROUND', (1, 0), (1, -1), colors.green),
+        ('GRID', (0, 0), (-1, -1), 1, colors.greenyellow),
+    ]))
+    elements.append(table)
+    elements.append(Spacer(1, 12))
+    
+    elements.append(Paragraph("Thank you for booking with us!", styles['Italic']))
+    elements.append(Spacer(1, 12))
 
-    p.setFont("Helvetica-Bold", 14)
-    p.drawString(100, height - 370, "Booking Information")
-    p.setFont("Helvetica", 12)
-    p.drawString(100, height - 390, f"Seats Booked: {booking.num_seats}")
-    p.drawString(100, height - 410, f"Booking Date: {booking.booking_time.strftime('%Y-%m-%d %H:%M')}")
-
-    p.setFont("Helvetica-Oblique", 12)
-    p.setFillColor(colors.darkgreen)
-    p.drawString(100, height - 450, "Thank you for booking with us!")
-
-    p.setFont("Helvetica", 10)
-    p.setFillColor(colors.grey)
-    p.drawString(100, 50, "If you have any questions, please contact our support team.")
-
-    p.showPage()
-    p.save()
+    doc.build(elements)
 
     pdf = buffer.getvalue()
     buffer.close()
@@ -380,11 +420,12 @@ def generate_booking_pdf(request, booking_id):
     return response
 
 @login_required
-def calendar_user_view (request): 
+def calendar_user_view(request):
     events = Event.objects.filter(bookings__user=request.user)
     courses = Course.objects.filter(subscribers__user=request.user)
     title = f"{request.user}'s calendar"
     return calendar_view(request, events, courses, title)
+
 
 class UserBookingListView(LoginRequiredMixin, ListView):
     model = Booking
@@ -519,40 +560,62 @@ class AdminBookingUpdateView(BookingUpdateMixin, UpdateView):
 def course_brochure_pdf(request, course_id):
     course = Course.objects.get(id=course_id)
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="{
-        course.name}.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="{course.name}.pdf"'
 
-    p = canvas.Canvas(response)
+    doc = SimpleDocTemplate(response, pagesize=letter)
+    styles = getSampleStyleSheet()
+    elements = []
+
     user = request.user if request.user.is_authenticated else None
 
-    image_height = 3 * inch
-    image_y_position = 800 - image_height
-
+    # Adding the course image
     if course.image and hasattr(course.image, 'path'):
         try:
-            p.drawImage(course.image.path, 100, image_y_position, width=4*inch,
-                        height=image_height, preserveAspectRatio=True, mask='auto')
+            img = Image(course.image.path, width=4 * inch, height=3 * inch)
+            elements.append(img)
+            elements.append(Spacer(1, 12))
         except Exception as e:
             print(f"Error loading image: {e}")
 
-    text_start_position = image_y_position - 30
+    # Adding the course title
+    elements.append(Paragraph(course.name, styles['Title']))
+    elements.append(Spacer(1, 12))
 
-    p.setFont("Helvetica", 16)
-    p.drawString(100, text_start_position, course.name)
-
+    # Adding user and date information if available
     if user:
-        p.setFont("Helvetica", 12)
-        p.drawString(100, text_start_position - 20, f"Requested by: {
-                     user.username} on {timezone.localtime().strftime('%Y-%m-%d %H:%M')}")
+        request_info = f"Requested by: {user.username} on {timezone.localtime().strftime('%Y-%m-%d %H:%M')}"
+        elements.append(Paragraph(request_info, styles['Normal']))
+        elements.append(Spacer(1, 12))
 
-    p.setFont("Helvetica", 12)
-    p.drawString(100, text_start_position - 40,
-                 f"Duration: {course.start_date} to {course.end_date}")
-    p.drawString(100, text_start_position - 60,
-                 f"Category: {course.get_category_display()}")
+    # Adding course details in a table
+    data = [
+        ['Start Date:', course.start_date],
+        ['End Date:', course.end_date],
+        ['Category:', course.get_category_display()],
+        ['Recurrence Day:', course.recurrence_day],
+        ['Time:', course.time.strftime('%H:%M')],
+    ]
+    table = Table(data, colWidths=[2 * inch, 4 * inch])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+    elements.append(table)
+    elements.append(Spacer(1, 12))
 
-    p.showPage()
-    p.save()
+    # Adding the course description
+    elements.append(Paragraph("Course Description", styles['Heading2']))
+    elements.append(Spacer(1, 12))
+    elements.append(Paragraph(course.description, styles['Normal']))
+    elements.append(Spacer(1, 12))
+
+    doc.build(elements)
     return response
 
 # * SUBSCRIBE::USER  ______________________________________________
@@ -690,7 +753,13 @@ class AdminUserSubscriptionDeleteView(CultureGroupRequiredMixin, DeleteView):
 class ExportActiveEventsToExcelView(CultureGroupRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        events = Event.get_active_events().annotate(num_bookings=Sum('bookings__num_seats'))
+        events = Event.get_active_events().annotate(
+            num_bookings=Sum('bookings__num_seats'))
+
+        if events.count() == 0:
+            messages.info(
+                request, "There are no events to view now. Maybe go ahead and put them on!")
+            return redirect('list_events')
 
         wb = openpyxl.Workbook()
         ws = wb.active

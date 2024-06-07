@@ -16,7 +16,7 @@ class Profile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     location = models.CharField(max_length=30, blank=True)
     birth_date = models.DateField(null=True, blank=True)
-    profile_pic = models.ImageField(upload_to='profile_pics')
+    profile_pic = models.ImageField(upload_to='profile_pics', default='user.png')
     interests = models.TextField(blank=True)
     
 class Message(models.Model):

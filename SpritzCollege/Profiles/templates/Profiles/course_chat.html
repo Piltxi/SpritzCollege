@@ -1,10 +1,25 @@
 {% extends 'base.html' %}
 {% load filter %}
-
+{% load static %}
 {% block title %} {{ title }} {% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css">
 <style>
+    .user-message {
+        background-color: #d1e7dd;
+        padding: 5px;
+        border-radius: 4px;
+        margin: 5px 0;
+    }
+
+    .other-message {
+        background-color: #f9f9f9;
+        padding: 5px;
+        border-radius: 4px;
+        margin: 5px 0;
+    }
+
     .back-link {
         margin-left: 70px;
     }
@@ -38,6 +53,8 @@
         margin-bottom: 20px;
         overflow-y: scroll;
         background-color: #f9f9f9;
+        justify-content: flex-end;
+        /* Mantiene i messaggi in basso */
     }
 
     .chat-input {
@@ -129,6 +146,82 @@
     .subscribed-users a:hover {
         text-decoration: underline;
     }
+
+    .subscribed-users {
+        margin-top: 20px;
+        width: 80%;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .subscribed-users h2 {
+        margin-top: 0;
+        font-size: 1.5rem;
+        color: #343a40;
+        text-align: center;
+        border-bottom: 2px solid #dee2e6;
+        padding-bottom: 10px;
+    }
+
+    .subscribed-users ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .subscribed-users li {
+        padding: 10px 15px;
+        margin: 5px;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: background-color 0.3s, transform 0.3s;
+        display: flex;
+        align-items: center;
+    }
+
+    .subscribed-users li:hover {
+        background-color: #e9ecef;
+        transform: scale(1.05);
+    }
+
+    .subscribed-users a {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    .subscribed-users a:hover {
+        text-decoration: underline;
+    }
+
+    .user-avatar {
+        margin-right: 10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid #ccc;
+    }
+
+    .default-avatar {
+        margin-right: 10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        background-color: #f0f0f0;
+        color: #888;
+        border: 1px solid #ccc;
+    }
 </style>
 
 <a class="back-link" href="{% url 'subscription_list' %}">/My Sub/</a>
@@ -148,10 +241,12 @@
 
 
                 </div>
+                {% if request.user|has_group:"culture" %}
                 <form method="post" action="{% url 'reset_course_chat' course.id %}">
                     {% csrf_token %}
                     <button type="submit" class="reset-button">Reset Chat</button>
                 </form>
+                {% endif %}
             </div>
         </div>
         <div class="course-image">
@@ -160,10 +255,17 @@
 
     </div>
     <div class="subscribed-users">
-        <h2>Users Enrolled in This Course</h2>
+        <h2>Users in <a style="font-style: italic; color: red;">{{ course.name }}</a></h2>
         <ul>
             {% for user in subscribed_users %}
             <li>
+                {% if user.profile.profile_pic %}
+                <img src="{{ user.profile.profile_pic.url }}" alt="{{ user.username }}" class="user-avatar">
+                {% else %}
+                <div class="default-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                {% endif %}
                 <a href="{% url 'direct_chat' user.username %}">{{ user.username }}</a>
             </li>
             {% endfor %}
@@ -172,13 +274,21 @@
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const chatLog = document.querySelector('#chat-log');
+        chatLog.scrollTop = chatLog.scrollHeight;  // Scroll to bottom on page load
+    });
+
     const chatSocket = new WebSocket(
         'ws://' + window.location.host + '/ws/chat/course/{{ course.id }}/');
 
     chatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
-        document.querySelector('#chat-log').innerHTML += (data.username + ': ' + data.message + '<br>');
-        document.querySelector('#chat-log').scrollTop = document.querySelector('#chat-log').scrollHeight;  // Scroll to bottom
+        const messageClass = data.username === '{{ request.user.username }}' ? 'user-message' : 'other-message';
+        const messageElement = `<div class="${messageClass}">${data.username}: ${data.message}</div>`;
+        const chatLog = document.querySelector('#chat-log');
+        chatLog.innerHTML += messageElement;
+        chatLog.scrollTop = chatLog.scrollHeight;  // Scroll to bottom
     };
 
     chatSocket.onclose = function (e) {
@@ -197,7 +307,6 @@
         const message = messageInputDom.value;
 
         if (message === "") {
-            // alert("Message cannot be empty!");
             return;
         }
 
@@ -208,4 +317,5 @@
         messageInputDom.value = '';
     };
 </script>
+
 {% endblock %}

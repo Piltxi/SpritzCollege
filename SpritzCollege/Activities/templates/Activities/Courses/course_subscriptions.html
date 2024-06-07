@@ -5,15 +5,14 @@
 {% block content %}
 
 <style>
-
     .back-link {
         margin-left: 70px;
     }
 
     body {
-    background-color: darkred !important;
-    color: orange !important;
-}
+        background-color: darkred !important;
+        color: orange !important;
+    }
 
     .modal {
         display: none;
@@ -38,6 +37,11 @@
     .modal-buttons {
         display: flex;
         justify-content: space-between;
+    }
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px; /* Optional: Adds space between buttons */
     }
 </style>
 
@@ -111,17 +115,15 @@
                     <td>{{ subscription.subscription_date|date:"d/m/Y H:i" }}</td>
 
                     <td>
-                        <button class="btn btn-danger"
-                            onclick="openModal({{ subscription.id }}, '{{ subscription.course.name }}', '{{ view_type }}')">Delete</button>
+                        <div class="button-container">
+                            <button class="btn btn-danger"
+                                onclick="openModal({{ subscription.id }}, '{{ subscription.course.name }}', '{{ view_type }}')">Delete</button>
 
-                        {% if view_type == 'user' %}
-                        <a href="{% url 'course_chat' subscription.course.id %}" class="btn btn-dark">Chat Room</a>
-                        {% endif %}
-                        <!-- {% if view_type == 'user' %}
-                        <td><button class="btn btn-danger">Delete</button>
-                        {% elif view_type == 'admin' %}
-                        <td><button class="btn btn-danger">Delete</button>
-                        {% endif %} -->
+                            {% if view_type == 'user' %}
+                            <a href="{% url 'course_chat' subscription.course.id %}" class="btn btn-dark">Chat Room</a>
+                            {% endif %}
+                        </div>
+
 
 
                     </td>

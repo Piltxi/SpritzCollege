@@ -186,7 +186,7 @@ def course_chat(request, course_id):
     user = request.user
 
     if user.course_subscriptions.filter(course=course).exists() or user.groups.filter(name="culture").exists() or user.groups.filter(name="administration").exists():
-        subscribed_users = User.objects.filter(course_subscriptions__course=course)
+        subscribed_users = User.objects.filter(course_subscriptions__course=course).exclude(course_subscriptions__user=user)
         return render(request, 'Profiles/course_chat.html', {'course': course, 'title': f"Chat - {course.name}", 'subscribed_users': subscribed_users})
     else:
         messages.success(request, 'You cannot enter this chat because you are not enrolled in the course! get away from the best orange platform in the world!!')
@@ -228,7 +228,6 @@ def my_chats(request):
     sent_messages = DirectMessage.objects.filter(sender=user).values('recipient').distinct()
     received_messages = DirectMessage.objects.filter(recipient=user).values('sender').distinct()
 
-    # Unire i destinatari e i mittenti unici
     chat_partners_ids = set(
         [msg['recipient'] for msg in sent_messages] +
         [msg['sender'] for msg in received_messages]
