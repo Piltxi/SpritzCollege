@@ -98,12 +98,6 @@ python3 manage.py migrate
 ``` bash
 python3 manage.py createsuperuser
 ```
-
-After cloning the project, you can import some data into the database to start a demo session; to import them:
-``` bash
-python3 manage.py letmedream
-```
-
 Now you are ready to start:
 ``` bash
 python3 manage.py runserver
