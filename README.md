@@ -79,7 +79,7 @@ Now you are ready! Run the following command to clone repo:
 ```
 git clone https://github.com/Piltxi/SpritzCollege
 ```
-##  <p style="color:orange; display:inline;"> *SpritzCollege* </p> setup and first <p style="color:red; display:inline;"> *drinks* </p>
+## 🔋 Setup and first drinks
 
 In the following lines you can find some commands necessary to set up the development environment for the web platform.
 
@@ -120,13 +120,37 @@ If you want to do the first tests to check:
 ``` bash
 python3 manage.py test Activities
 ```
+ 
+## 🔩 Load sample data
+You can load data in several ways.
+If you want to load data such as "first startup",
+the advice is to execute these first commands.
 
-##  Active User 
+``` bash
+python3 manage.py up_user
+```
+
+``` bash
+python3 manage.py up_activities
+```
+What will happen?
+
+- Users will be created (as shown in the table below)
+- Test events will also be created, which you can sign up for and which you can view bookings and brochures for.
+- No courses will be created: it's up to you to create them using the forms, and "play" with the chat feature.
+
+Please note: for chat to work, you need to have Docker installed and running, and follow the command above.
+
+Happy Surfing 🤘
+
+
+
+###  👻 Active User 
+These will be the users registered after running the above commands:
 <center>
 
 | **Username** | **Password** | **Group**          |
 |--------------|--------------|--------------------|
-| admin        | admin    | *nd*            |
 | elia        | pitz    | *all*           |
 | visitor1        | tecnologieweb    | visitor           |
 | visitor2        | tecnologieweb    | visitor           |
