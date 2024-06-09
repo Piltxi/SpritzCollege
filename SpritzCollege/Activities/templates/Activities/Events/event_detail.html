@@ -7,30 +7,6 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<!-- <script>
-    $(document).ready(function() {
-        $('form').on('submit', function(event) {
-            event.preventDefault(); // Previeni l'invio del modulo predefinito
-
-            // Effettua una richiesta AJAX per inviare i dati del modulo
-            $.ajax({
-                url: $(this).attr('action'),
-                type: $(this).attr('method'),
-                data: $(this).serialize(),
-                success: function(response) {
-                    // Se la prenotazione è avvenuta con successo, ridireziona alla pagina dell'evento
-                    window.location.href = response.redirect;
-                },
-                error: function(response) {
-                    // Se ci sono errori nel form, mostra una finestra modale con gli errori
-                    var errors = JSON.parse(response.responseText).errors;
-                    alert(errors); // Puoi sostituire questo con la logica per mostrare la finestra modale
-                }
-            });
-        });
-    });
-</script> -->
-
 
 <style>
     .container {

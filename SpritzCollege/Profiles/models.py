@@ -1,12 +1,22 @@
 from django.db import models
 from django.contrib.auth.models import User
 from Activities.models import Course
+from SpritzCollege import settings
 
 import os
+import glob
 
-def path_profile_pic (instance, filename):
+def path_profile_pic(instance, filename):
     ext = filename.split('.')[-1]
     filename = f'{instance.user.id}.{ext}'
+    directory = os.path.join(settings.MEDIA_ROOT, 'profile_pics')
+    filepath = os.path.join(directory, filename)
+ 
+    possibly_old_files = glob.glob(os.path.join(directory, f'{instance.user.id}.*'))
+    for old_file in possibly_old_files:
+        if os.path.isfile(old_file):
+            os.remove(old_file)
+    
     return os.path.join('profile_pics', filename)
 
 class Profile(models.Model):

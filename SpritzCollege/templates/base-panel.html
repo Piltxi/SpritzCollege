@@ -4,7 +4,6 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <div class="container">
@@ -17,10 +16,18 @@
             </div>
             <ul>
                 <li>
+
+                    {% if request.user.is_superuser %}
+                    <a href="/admin">
+                        <i class="fa fa-cog fa-spin"></i>
+                        War Room
+                    </a>
+                    {% else %}
                     <a href="{% url 'profile_update' %}">
                         <i class="fas fa-user"></i>
                         My Profile
                     </a>
+                    {% endif %}
                 </li>
                 <li>
                     <a href="{% url 'personal_chats' %}">
@@ -31,7 +38,7 @@
 
 
                 <!-- <li class="centered"> -->
-               <li>
+                <li>
                     <a href="{% url 'my_messages' %}">
                         <i class="fas fa-envelope"></i>
                         Notifications
@@ -134,20 +141,20 @@
 
     .container {
         display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: 80vh;
-    width: 80vw;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        height: 80vh;
+        width: 80vw;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .left-pane {
-        border: 2px solid yellow; 
-        margin-right: 10px; 
+        border: 2px solid yellow;
+        margin-right: 10px;
         flex: 1;
         background-color: #2c3e50;
         color: white;
@@ -160,7 +167,7 @@
     }
 
     .right-pane {
-        border: 5px solid green; 
+        border: 5px solid green;
         justify-content: center;
         align-items: center;
         flex: 2;
@@ -216,5 +223,6 @@
         font-size: 24px;
     }
 </style>
+
 
 {% endblock %}

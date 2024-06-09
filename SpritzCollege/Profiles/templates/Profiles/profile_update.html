@@ -1,154 +1,207 @@
-<!-- profile_update.html -->
 {% extends "base-panel.html" %}
 
 {% block title %} My Profile - SpritzCollege {% endblock %}
 
 {% block panel %}
- 
-
-  <div class="custom-container mt-4">
-
-    {% if user.profile.profile_pic %}
-    <div class="text-center mb-4">
-      <img src="{{ user.profile.profile_pic.url }}" class="rounded-circle profile-pic" alt="Profile Picture" width="150" height="150">
+<div id="confirmDeleteModal" class="modal">
+  <div class="modal-content">
+    <p>Are you sure you want to delete your profile?</p>
+    <div class="modal-buttons">
+      <button id="confirmDeleteButton">Yes</button>
+      <button onclick="closeModal()">Cancel</button>
     </div>
-    {% endif %}
+  </div>
+</div>
+
+<div id="deleteConfirmation" class="modal">
+  <div class="modal-content">
+    <p>Profile successfully deleted! redirect in progress....</p>
+  </div>
+</div>
+
+<div class="custom-container mt-4">
+
+  {% if user.profile.profile_pic %}
+  <div class="text-center mb-4">
+    <img src="{{ user.profile.profile_pic.url }}" class="rounded-circle profile-pic" alt="Profile Picture" width="150"
+      height="150">
+  </div>
+  {% endif %}
 
 
-    <div class="custom-card mb-4">
-      <div class="custom-card-header">
-        <h2>Update Profile</h2>
-      </div>
-      <div class="custom-card-body">
-        <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          <div class="custom-form-group">
-            {{ form.as_p }}
-          </div>
-          <button type="submit" class="btn btn-primary">Save changes</button>
-        </form>
-      </div>
+  <div class="custom-card mb-4">
+    <div class="custom-card-header">
+      <h2>Update Profile</h2>
     </div>
-
-    <div class="custom-card mb-4">
-      <div class="custom-card-header">
-        <h2>Change Password</h2>
-      </div>
-      <div class="custom-card-body">
-        <form method="post" action="{% url 'password_change' %}">
-          {% csrf_token %}
-          <div class="custom-form-group">
-            {{ password_form.as_p }}
-          </div>
-          <button type="submit" class="btn btn-warning">Change password</button>
-        </form>
-      </div>
-    </div>
-
-    <div class="custom-card mb-4">
-      <div class="custom-card-header">
-        <h2>Delete Account</h2>
-      </div>
-      <div class="custom-card-body">
-        <form method="post" action="{% url 'profile_delete' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Delete my account</button>
-        </form>
-      </div>
+    <div class="custom-card-body">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="custom-form-group">
+          {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </form>
     </div>
   </div>
 
-  <div id="lightboxModal" class="lightbox-modal">
-    <span class="lightbox-close">&times;</span>
-    <img class="lightbox-content" id="lightboxImage">
+  <div class="custom-card mb-4">
+    <div class="custom-card-header">
+      <h2>Change Password</h2>
+    </div>
+    <div class="custom-card-body">
+      <form method="post" action="{% url 'password_change' %}">
+        {% csrf_token %}
+        <div class="custom-form-group">
+          {{ password_form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-warning">Change password</button>
+      </form>
+    </div>
   </div>
+
+  <div class="custom-card mb-4">
+    <div class="custom-card-header">
+      <h2>Delete Account</h2>
+    </div>
+    <div class="custom-card-body">
+      <form method="post" action="{% url 'profile_delete' %}" id="deleteAccountForm"></form>
+      {% csrf_token %}
+
+      <button class="btn btn-danger" onclick="openModal()">Delete my account</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="lightboxModal" class="lightbox-modal">
+  <span class="lightbox-close">&times;</span>
+  <img class="lightbox-content" id="lightboxImage">
+</div>
 
 <style>
+  .profile-pic {
+    border: 5px solid green;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    object-position: center;
+  }
 
+  .custom-container {
+    margin-top: 1rem;
+  }
 
-.custom-container {
-  margin-top: 1rem;
-}
+  .custom-card {
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+  }
 
-.custom-card {
-  margin-bottom: 1rem;
-  border: 1px solid #dee2e6;
-  border-radius: 0.25rem;
-}
+  .custom-card-header {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 0;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+  }
 
-.custom-card-header {
-  padding: 0.75rem 1.25rem;
-  margin-bottom: 0;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
-}
+  .custom-card-body {
+    padding: 1.25rem;
+  }
 
-.custom-card-body {
-  padding: 1.25rem;
-}
+  .custom-form-group {
+    margin-bottom: 1rem;
+  }
 
-.custom-form-group {
-  margin-bottom: 1rem;
-}
+  /* Lightbox styles */
+  .lightbox-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+  }
 
-/* Lightbox styles */
-.lightbox-modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  padding-top: 100px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.9);
-}
+  .lightbox-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+  }
 
-.lightbox-content {
-  margin: auto;
-  display: block;
-  width: 80%;
-  max-width: 700px;
-}
+  .lightbox-close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+  }
 
-.lightbox-close {
-  position: absolute;
-  top: 15px;
-  right: 35px;
-  color: #f1f1f1;
-  font-size: 40px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.lightbox-close:hover,
-.lightbox-close:focus {
-  color: #bbb;
-  text-decoration: none;
-  cursor: pointer;
-}
-
+  .lightbox-close:hover,
+  .lightbox-close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+  }
 </style>
 
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     var modal = document.getElementById('lightboxModal');
     var modalImg = document.getElementById('lightboxImage');
     var img = document.querySelector('.profile-pic');
     var span = document.getElementsByClassName('lightbox-close')[0];
-  
-    img.onclick = function() {
+
+    img.onclick = function () {
       modal.style.display = 'block';
       modalImg.src = this.src;
     }
-  
-    span.onclick = function() {
+
+    span.onclick = function () {
       modal.style.display = 'none';
     }
   });
-  </script>
+</script>
+
+
+<script>
+  function openModal() {
+    document.getElementById("confirmDeleteModal").style.display = "block";
+  }
+
+  function closeModal() {
+    document.getElementById("confirmDeleteModal").style.display = "none";
+  }
+
+  document.getElementById("confirmDeleteButton").addEventListener("click", function () {
+    fetch("{% url 'profile_delete' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+      }
+    })
+      .then(response => {
+        if (response.ok) {
+          closeModal();
+          document.getElementById("deleteConfirmation").style.display = "block";
+          setTimeout(function () {
+            window.location.href = "{% url 'home' %}";
+          }, 1300);
+        } else {
+          alert("Deletion failed. If you have any problems, contact the administrator!");
+        }
+      });
+  });
+</script>
+
+
 {% endblock %}
