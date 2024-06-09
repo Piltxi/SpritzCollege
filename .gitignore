@@ -1,6 +1,8 @@
 **/.DS_Store
 /trash/*
-/media/Courses/*
+/SpritzCollege/media/Courses/*
+/SpritzCollege/media/profile_pics/*
 /SpritzCollege/Activities/migrations/*
 /SpritzCollege/Profiles/migrations/*
 /SpritzCollege/db.sqlite3
+/app/*

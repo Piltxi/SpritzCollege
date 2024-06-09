@@ -1,7 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
-
 from Activities.models import Course
+
+import os
+
+def path_profile_pic (instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f'{instance.user.id}.{ext}'
+    return os.path.join('profile_pics', filename)
 
 class Profile(models.Model):
     CATEGORY_CHOICES = [
@@ -16,7 +22,7 @@ class Profile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     location = models.CharField(max_length=30, blank=True)
     birth_date = models.DateField(null=True, blank=True)
-    profile_pic = models.ImageField(upload_to='profile_pics', default='user.png')
+    profile_pic = models.ImageField(upload_to=path_profile_pic, default='user.png')
     interests = models.TextField(blank=True)
     
 class Message(models.Model):
