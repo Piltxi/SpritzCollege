@@ -17,9 +17,11 @@ The design combines traditional hotel management with advanced student tracking.
 </p>
 
 
-- *Profiles App* This application handles user management, including registration, profile updates, and deletion. It inherits functionality from the Django framework for login and registration. Users can specify their interests during registration, which helps tailor their experience. The app also includes a notification system to alert users of new events and a chat system for real-time communication between users in the same course.
+- *Profiles App* This application handles user management, including registration, profile updates, and deletion. It inherits functionality from the Django framework for login and registration. Users can specify their interests during registration, which helps tailor their experience. The app also includes a notification system to alert users of new events and a chat system for real-time communication between users in the same course. 
 
 - *Activities App* This application manages information about events and courses. Users can browse available events and courses, register, and book seats. The app supports CRUD operations for events and courses, and authorized users can manage these activities comprehensively, including viewing and exporting booking data.
+
+<a href="img_readme/cs_manag.svg">view class diagram</a>
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
