@@ -11,7 +11,6 @@ urlpatterns = [
     path('profile/update/', ProfileUpdateView.as_view(), name='profile_update'),
     path('profile/password/', CustomPasswordChangeView.as_view(), name='password_change'),
     path('profile/delete/', UserDeleteView.as_view(), name='profile_delete'),
-    path('profile/deleted/', TemplateView.as_view(template_name='Profiles/account_deleted.html'), name='account_deleted'),
     
     path('messages/da/', delete_all_messages, name='delete_messages'),
     

@@ -168,7 +168,7 @@ class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     
 class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
-    success_url = reverse_lazy('account_deleted')
+    success_url = reverse_lazy('home')
 
     def get_object(self, queryset=None):
         return self.request.user
