@@ -7,6 +7,7 @@ import json
 from datetime import datetime
 from django.contrib.auth.models import Group
 import pytz
+from threading import Timer
 
 from Activities.models import Event, Course
 
@@ -84,6 +85,36 @@ def load_events_from_json(file_path):
                 price=event_data['price']
             )
             event.save()
+
+def db_checkStatus_scheduledEvent():
+    
+    '''
+        print("Creating test event...")
+        tt = pytz.timezone('Europe/Rome')
+        Event.objects.create(
+            name="Event Test 1",
+            date=datetime(year=2024, month=6, day=12, hour=8, minute=31, tzinfo=tt),
+            place="cinema",
+            description="ev for trigger test",
+            price=Decimal('0.00')
+        )
+        print("Test event created.")
+        
+        testing scopes
+    '''
+    
+    # print("Checking status of active events...")
+    now = timezone.now()
+    active_events = Event.objects.filter(status=Event.ACTIVE)
+    print(f"CH_SCHEDULE: Active events count: {active_events.count()}")
+
+    for ev in active_events:
+        if ev.date < now:
+            ev.status = Event.COMPLETED
+            ev.save()
+            print(f"Event {ev.name} status updated.")
+
+    Timer(3600, db_checkStatus_scheduledEvent).start()
 
 def _start_SpritzCollege (): 
     db_create_groups()
