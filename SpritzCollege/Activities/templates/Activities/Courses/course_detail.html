@@ -93,8 +93,9 @@
            
             <br><br>
             {% if request.user|has_group:"culture" %}
-            <a href="{% url 'export_course_subscriptions_excel' course.id %}" class="btn btn-info">Export to
-                Excel</a>
+            <a href="{% url 'course_subscriptions' course.id %}" class="btn btn-info">Active Subscriptions</a>
+            <a href="{% url 'export_course_subscriptions_excel' course.id %}" class="btn btn-light">Export to
+                Excel</a> <br> <br>
             <a class="btn btn-warning" href="{% url 'course_update' course.id %}">Update Course</a>
             <button class="btn btn-danger" onclick="openModal()">Delete Course</button>
             <br><br>
