@@ -23,9 +23,6 @@ def path_course_pic(instance, filename):
     directory = os.path.join(settings.MEDIA_ROOT, 'course_pics')
     filepath = os.path.join(directory, filename)
  
-    print (f"\n\nId riconosciuto: {instance.id}\n\n")
-    print (f"\n\nNome riconosciuto: {instance.name}\n\n")
- 
     possibly_old_files = glob.glob(os.path.join(directory, f'{cchs}.*'))
     for old_file in possibly_old_files:
         if os.path.isfile(old_file):
@@ -175,16 +172,6 @@ class Course(models.Model):
         
     def save(self, *args, **kwargs):
         self.clean()
-        
-        # if not self.id:
-        #     temp_image = self.image
-        #     self.image = None
-        #     super().save(*args, **kwargs)
-        #     self.image = temp_image
-
-        # if self.image and 'default_course.jpeg' not in self.image.path:
-        #     self.image.name = course_image_path(self, self.image.name)
-
         super().save(*args, **kwargs)
         
     def clean (self): 
