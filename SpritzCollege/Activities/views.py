@@ -34,7 +34,6 @@ from .forms import BookingForm, EventForm, SearchForm, CourseForm, SubscriptionF
 class CultureGroupRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         user = self.request.user
-
         return user.is_superuser or user.groups.filter(name='administration').exists() or user.groups.filter(name='culture').exists()
 
 
@@ -338,15 +337,12 @@ def generate_booking_pdf(request, booking_id):
     doc = SimpleDocTemplate(buffer, pagesize=letter)
     styles = getSampleStyleSheet()
     elements = []
-
-    # Adding a banner or title
     
     header = f"{booking_id} :: Booking Confirmation"
     
     elements.append(Paragraph(header, styles['Title']))
     elements.append(Spacer(1, 12))
 
-    # User Information Section
     elements.append(Paragraph("User Information", styles['Heading2']))
     user_info = [
         ['Username:', booking.user.username],
@@ -366,12 +362,11 @@ def generate_booking_pdf(request, booking_id):
     elements.append(table)
     elements.append(Spacer(1, 12))
 
-    # Event Information Section
     elements.append(Paragraph("Event Information", styles['Heading2']))
     event_info = [
         ['Event:', booking.event.name],
         ['Description:', Paragraph(booking.event.description, styles['Normal'])],
-        ['Date:', booking.event.date.strftime('%Y-%m-%d %H:%M')],
+        ['Date:', timezone.localtime(booking.event.date).strftime('%Y-%m-%d %H:%M')],
         ['Place:', booking.event.place],
         ['Status:', booking.event.status],
     ]
@@ -392,7 +387,7 @@ def generate_booking_pdf(request, booking_id):
     elements.append(Paragraph("Booking Information", styles['Heading2']))
     booking_info = [
         ['Seats Booked:', booking.num_seats],
-        ['Booking Date:', booking.booking_time.strftime('%Y-%m-%d %H:%M')],
+        ['Booking Date:', timezone.localtime(booking.booking_time).strftime('%Y-%m-%d %H:%M')],
     ]
     table = Table(booking_info, colWidths=[2 * inch, 4 * inch])
     table.setStyle(TableStyle([

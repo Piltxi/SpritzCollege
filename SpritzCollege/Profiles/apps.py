@@ -6,5 +6,5 @@ class ProfilesConfig(AppConfig):
     name = 'Profiles'
 
     def ready(self):
-        print("Caricamento dei segnali di Profiles")
+        # print("Caricamento dei segnali di Profiles")
         import Profiles.signals

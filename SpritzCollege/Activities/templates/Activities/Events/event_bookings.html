@@ -37,6 +37,20 @@
         display: flex;
         justify-content: space-between;
     }
+    .highlight-date-event {
+        font-weight: bold;
+        color: yellow;
+        background-color: darkred;
+        padding: 5px;
+        border-radius: 5px;
+    }
+    .highlight-date-book {
+        font-weight: bold;
+        color: cornflowerblue;
+        background-color: darkred;
+        padding: 5px;
+        border-radius: 5px;
+    }
 </style>
 
 <div id="confirmDeleteModal" class="modal">
@@ -90,7 +104,10 @@
             <tr>
                 <td>{{ item.user }}</td>
                 <td> <a href="{% url 'event_detail' item.event.id %}">{{ item.event.name }}</a> </td>
-                <td>{{ item.event.date }}</td>
+                <td>
+                    <span class="highlight-date-event">{{ item.event.date|date:"Y-m-d H:i" }}</span> 
+                    booked on <span class="highlight-date-book">{{ item.booking_time|date:"Y-m-d H:i" }}</span>
+                </td>
                 <td>{{ item.num_seats }}</td>
                 <td>
                     <a href="{% url 'user_booking_pdf' item.id %}" class="btn btn-primary btn-sm">Download PDF</a>

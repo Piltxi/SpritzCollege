@@ -88,7 +88,8 @@ class Event(models.Model):
         return cls.objects.filter(date__gte=timezone.now())
 
     def __str__(self):
-        return f"{self.name} ({self.date.strftime('%Y-%m-%d %H:%M')})"
+        local_date = timezone.localtime(self.date)
+        return f"{self.name} ({local_date.strftime('%Y-%m-%d %H:%M')})"
 
     class Meta:
         ordering = ['date']
