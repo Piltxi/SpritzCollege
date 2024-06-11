@@ -1,12 +1,12 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User, Group
+from Profiles.models import Profile
 
 class Command(BaseCommand):
     help = 'Load sample users into the database'
 
     def handle(self, *args, **kwargs):
 
-        # Create groups if they don't exist
         group_names = ['administration', 'culture', 'visitors']
         groups = {}
         for name in group_names:
@@ -19,7 +19,6 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS("-> Created user groups"))
 
-        # Define users and their group assignments
         users = [
             {'username': 'elia', 'password': 'pitz', 'group': 'all'},
             {'username': 'visitor1', 'password': 'tecnologieweb', 'group': 'visitors'},
@@ -39,6 +38,9 @@ class Command(BaseCommand):
 
             user = User.objects.create_user(username=username, password=password)
             self.stdout.write(self.style.SUCCESS(f'Created user: {username}'))
+
+            profile = Profile.objects.create(user=user)
+            self.stdout.write(self.style.SUCCESS(f'Created profile for user: {username}'))
 
             if group_name == 'all':
                 for group in groups.values():
