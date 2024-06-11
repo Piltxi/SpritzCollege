@@ -150,8 +150,10 @@ class Course(models.Model):
     image = models.ImageField(default='default_course.jpeg')
     category = models.CharField(
         max_length=50, choices=CATEGORY_CHOICES, default='ANY')
-
+        
     def save(self, *args, **kwargs):
+        self.clean()
+        
         if not self.id:
             temp_image = self.image
             self.image = None
@@ -162,10 +164,13 @@ class Course(models.Model):
             self.image.name = course_image_path(self, self.image.name)
 
         super().save(*args, **kwargs)
+        
+    def clean (self): 
+        if self.end_date < self.start_date:
+            raise ValidationError('The end date must be greater than the start date!')
 
     def __str__(self):
         return self.name
-
 
 class Subscription(models.Model):
     user = models.ForeignKey(
