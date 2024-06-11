@@ -61,7 +61,7 @@
                             <img src="{{ l.image.url }}" class="d-block w-100 img-fluid" alt="{{ l.name }}">
                             <div class="carousel-caption d-none d-md-block">
                                 <strong>{{ l.name }}</strong><br>
-                                {{ l.description|truncatechars:100 }}
+                                {{ l.description|truncatechars:20 }}
                             </div>
                         </a>
                     </div>
@@ -100,8 +100,7 @@
                             <td><a href="{% url 'course_brochure_pdf' item.id %}" class="btn btn-primary">Brochure</a>
                             
                                 {% if request.user.is_authenticated %}
-                                <a href="{% url 'new_subscription' item.id %}" class="btn btn-success">Subscribe</a>
-                                <a href="{% url 'course_chat' item.id %}" class="btn btn-dark">Chat Room</a>
+                                <a href="{% url 'course_chat' item.id %}" class="btn btn-success">Chat Room</a>
                                 {% endif %}
                                 
                                 {% if request.user|has_group:"culture" %}

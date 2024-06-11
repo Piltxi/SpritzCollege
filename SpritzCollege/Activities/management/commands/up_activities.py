@@ -1,8 +1,8 @@
 from decimal import Decimal
 from django.core.management.base import BaseCommand
-from datetime import datetime
+from datetime import date, datetime, time
 import pytz
-from Activities.models import Event
+from Activities.models import Course, Event
 
 
 class Command(BaseCommand):
@@ -12,6 +12,7 @@ class Command(BaseCommand):
         rome_tz = pytz.timezone('Europe/Rome')
 
         Event.objects.all().delete()
+        Course.objects.all().delete()
 
         Event.objects.create(
             name="Web Technologies Exam",
@@ -213,6 +214,36 @@ class Command(BaseCommand):
             description="Festival showcasing musical and artistic talents of students.",
             place="University of Modena and Reggio Emilia"
         )
-
+        
+        Course.objects.create(
+            name="Data Structures",
+            start_date=date(2024, 9, 2),
+            end_date=date(2024, 12, 16),
+            recurrence_day="Tuesday",
+            description="Study of data structures such as arrays, stacks, queues, linked lists, trees, and graphs.",
+            time= time(11, 0),
+            category= "TCH",
+        )
+        
+        Course.objects.create(
+            name="Software Engineering",
+            start_date=date(2024, 9, 5),
+            end_date=date(2024, 12, 19),
+            recurrence_day="Friday",
+            description="Principles of software engineering including software development lifecycle, agile methodologies, and project management.",
+            time=time(10, 0),
+            category= "TCH",
+        )
+        
+        Course.objects.create(
+            name="Computer Networks",
+            start_date=date(2024, 9, 10),
+            end_date=date(2024, 12, 24),
+            recurrence_day="Wednesday",
+            description="Introduction to computer networks, network protocols, and internet architecture.",
+            time=time(11, 0),
+            category= "TCH",
+        )
+        
         self.stdout.write(self.style.SUCCESS(
-            'All events have been successfully loaded'))
+            'All activities have been successfully loaded'))

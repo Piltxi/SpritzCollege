@@ -133,7 +133,6 @@ What will happen?
 
 - Users will be created (as shown in the table below)
 - Test events will also be created, which you can sign up for and which you can view bookings and brochures for.
-- No courses will be created: it's up to you to create them using the forms, and "play" with the chat feature.
 
 Please note: for chat to work, you need to have Docker installed and running, and follow the command above.
 
