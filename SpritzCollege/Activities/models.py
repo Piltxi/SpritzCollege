@@ -51,7 +51,7 @@ class Event(models.Model):
         return self.price is None or self.price == Decimal('0.00')
 
     def clean(self):
-        if self.date < timezone.now():
+        if self._state.adding and self.date < timezone.now():
             raise ValidationError('It is not possible to book a past event!')
 
         if self.duration and self.duration.total_seconds() < 60:
