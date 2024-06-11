@@ -30,10 +30,10 @@ def group_required(group_name):
     def in_group(user):
         
         if user.is_superuser:
-            return True
+            return user.is_superuser
         
         if user.groups.filter(name="administration").exists():
-            return True
+            return user.groups.filter(name="administration").exists()
         
         return user.is_authenticated and user.groups.filter(name=group_name).exists()
     
@@ -184,7 +184,7 @@ def course_chat(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     user = request.user
 
-    if user.course_subscriptions.filter(course=course).exists() or user.groups.filter(name="culture").exists() or user.groups.filter(name="administration").exists():
+    if user.course_subscriptions.filter(course=course).exists() or user.groups.filter(name="culture").exists() or user.groups.filter(name="administration").exists() or user.is_superuser:
         subscribed_users = User.objects.filter(course_subscriptions__course=course).exclude(course_subscriptions__user=user)
         return render(request, 'Profiles/course_chat.html', {'course': course, 'title': f"Chat - {course.name}", 'subscribed_users': subscribed_users})
     else:
