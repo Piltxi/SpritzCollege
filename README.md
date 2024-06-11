@@ -139,8 +139,6 @@ Please note: for chat to work, you need to have Docker installed and running, an
 
 Happy Surfing 🤘
 
-
-
 ###  👻 Active User 
 These will be the users registered after running the above commands:
 <center>
@@ -153,3 +151,9 @@ These will be the users registered after running the above commands:
 | Nicola        | capodieci    | culture       |
 | Claudia        | django-channels    | administration           |
 </center>
+
+## 📑 SpritzCollege in Production 📊
+Be careful: <br>
+- If you are testing the functions of the platform, if not necessary I recommend you comment the call to `db_checkStatus_scheduledEvent()` in <a href="SpritzCollege/SpritzCollege/urls.py">urls.py</a>. Tests run with in `db_checkStatus_scheduledEvent()` will be an infinite loop, and other features may not behave as expected.
+- In <a href="SpritzCollege/SpritzCollege/urls.py">urls.py</a> you can use `db_pialla()` only when you want to delete all content and data from the database; in alternative, you can call this function `db_delete()`. 
+- In <a href="SpritzCollege/SpritzCollege/urls.py">urls.py</a>, remember to call db_checkStatus_scheduledEvent() when you're in the production phase.
