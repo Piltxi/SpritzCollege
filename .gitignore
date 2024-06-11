@@ -6,3 +6,5 @@
 /SpritzCollege/Profiles/migrations/*
 /SpritzCollege/db.sqlite3
 /app/*
+/SpritzCollege/Activities/__pycache__/*
+/SpritzCollege/Profiles/__pycache__/*
