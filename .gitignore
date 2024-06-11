@@ -2,6 +2,7 @@
 /trash/*
 /SpritzCollege/media/Courses/*
 /SpritzCollege/media/profile_pics/*
+/SpritzCollege/media/course_pics/*
 /SpritzCollege/Activities/migrations/*
 /SpritzCollege/Profiles/migrations/*
 /SpritzCollege/db.sqlite3

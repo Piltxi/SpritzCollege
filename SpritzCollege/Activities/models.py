@@ -1,3 +1,4 @@
+import glob
 from django.db import models
 from django.forms import ValidationError
 from django.utils import timezone
@@ -7,9 +8,30 @@ from django.db.models import Q, Sum, F, ExpressionWrapper
 from datetime import timedelta
 from decimal import Decimal
 import os
+import hashlib
 
-def course_image_path(instance, filename):
-    return f"Courses/{instance.id}/{filename}"
+from SpritzCollege import settings
+
+def path_course_pic(instance, filename):
+    ext = filename.split('.')[-1]
+    
+    data = f"{instance.name}{instance.start_date}{instance.end_date}{instance.recurrence_day}{instance.time}{instance.category}"
+    hs = hashlib.sha256(data.encode())
+    cchs = hs.hexdigest()[:25]
+    
+    filename = f'{cchs}.{ext}'
+    directory = os.path.join(settings.MEDIA_ROOT, 'course_pics')
+    filepath = os.path.join(directory, filename)
+ 
+    print (f"\n\nId riconosciuto: {instance.id}\n\n")
+    print (f"\n\nNome riconosciuto: {instance.name}\n\n")
+ 
+    possibly_old_files = glob.glob(os.path.join(directory, f'{cchs}.*'))
+    for old_file in possibly_old_files:
+        if os.path.isfile(old_file):
+            os.remove(old_file)
+    
+    return os.path.join('course_pics', filename)
 
 def default_event_time():
     return (timezone.localtime(timezone.now()) + timedelta(hours=1)).replace(second=0, microsecond=0)
@@ -147,21 +169,21 @@ class Course(models.Model):
     end_date = models.DateField()
     recurrence_day = models.CharField(max_length=20)
     time = models.TimeField()
-    image = models.ImageField(default='default_course.jpeg')
+    image = models.ImageField(upload_to=path_course_pic, default='default_course.jpeg')
     category = models.CharField(
         max_length=50, choices=CATEGORY_CHOICES, default='ANY')
         
     def save(self, *args, **kwargs):
         self.clean()
         
-        if not self.id:
-            temp_image = self.image
-            self.image = None
-            super().save(*args, **kwargs)
-            self.image = temp_image
+        # if not self.id:
+        #     temp_image = self.image
+        #     self.image = None
+        #     super().save(*args, **kwargs)
+        #     self.image = temp_image
 
-        if self.image and 'default_course.jpeg' not in self.image.path:
-            self.image.name = course_image_path(self, self.image.name)
+        # if self.image and 'default_course.jpeg' not in self.image.path:
+        #     self.image.name = course_image_path(self, self.image.name)
 
         super().save(*args, **kwargs)
         
